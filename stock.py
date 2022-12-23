@@ -7,15 +7,15 @@ from pykrx import stock
 from utils import convert_format, convert_feature_format, dataframe_empty_handler
 
 
-krx_market = {'STK': ' KOSPI', 'KSQ': 'KOSDAQ', 'KNX': 'KONEX'}
+krx_market = {'STK': 'KOSPI', 'KSQ': 'KOSDAQ', 'KNX': 'KONEX'}
 class Stock:
-    def __init__(self, ticker, market='ALL', p=None) -> None:
+    def __init__(self, ticker, market='ALL') -> None:
         '''
         p: path for historical data
         '''
         self.ticker = ticker
         self.market = krx_market.get(krx.get_stock_ticekr_market(ticker)) if market=='ALL' else market
-        self.path = Path.cwd() / 'Stock' / self.market.capitalize() if not p else p
+        self.path = Path.cwd() / 'Stock' / self.market.capitalize()
         self.path.mkdir(parents=True, exist_ok=True)
         
     def download_data(self, start=None, end=None) -> pd.DataFrame:
@@ -42,7 +42,7 @@ class Stock:
         '''
         Load historical data from the path
         '''
-        self.data = pd.read_csv(self.path / f'{self.ticker}.csv', index='Date')
+        self.data = pd.read_csv(self.path / f'{self.ticker}.csv', index_col='Date')
         return self.data
     
     @dataframe_empty_handler
@@ -56,14 +56,14 @@ class Stock:
 
 
 class FeatureStock(Stock):
-    def __init__(self, ticker, market='ALL', p=None, volume=False, SMA=[], EMA=[], MACD=[0, 0, 0]) -> None:
+    def __init__(self, ticker, market='ALL', directory=None, volume=False, SMA=[], EMA=[], MACD=[0, 0, 0]) -> None:
         '''
         volume: if include volume feature, True. Else, False.
         SMA: simple moving average period list
         EMA: exponential moving average period list
         MACD: [short period, longer period, oscillator period]
         '''
-        super().__init__(ticker, market, p)
+        super().__init__(ticker, market, directory)
         self.volume = volume
         self.SMA = SMA
         self.EMA = EMA
@@ -87,11 +87,9 @@ class FeatureStock(Stock):
 
 
 class StockMarket:
-    def __init__(self, market='ALL', p=None) -> None:
+    def __init__(self, market='ALL') -> None:
         self.market = market
-        self.tickers = stock.get_market_ticker_list(market=market)
-        self.path = Path.cwd() / 'Stock' / self.market.capitalize() if not p else p
-        self.path.mkdir(parents=True, exist_ok=True)
+        self.tickers = sorted(stock.get_market_ticker_list(market=market))
         
     def update_datas(self):
         for ticker in self.tickers:

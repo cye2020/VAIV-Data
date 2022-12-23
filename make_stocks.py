@@ -12,6 +12,6 @@ if __name__ == '__main__':
              'KONEX: Stock market includes KONEX only'
     )
     args = parser.parse_args()
-    
+
     for market in args.market:
         StockMarket(market.upper()).update_datas()
