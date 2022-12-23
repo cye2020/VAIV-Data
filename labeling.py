@@ -15,6 +15,8 @@ class CNNLabeling(Labeling):
         '''
         period: int
             trading period (= the number of candlestick chart candles)
+        interval: int
+            forecast interval
         '''
         super().__init__()
         self.path = self.path / 'CNN'
