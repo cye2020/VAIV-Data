@@ -80,16 +80,33 @@ class Bullish:
             super().__init__(num)
             self.conditions.append(Condition(bearish_candle, 0))
             self.conditions.append(Condition(lower, 1, 0))
-            self.conditions.append(Condition(gravestone, 3, 1, 1))
+            self.conditions.append(Condition(gravestone, 1, 3, 1, 1))
             self.conditions.append(Condition(big_body, 0, 0.6))
 
     class Hammer(Pattern):
         def __init__(self, num=2) -> None:
             super().__init__(num)
+            self.conditions.append(Condition(bearish_candle, 0))
+            self.conditions.append(Condition(lower, 1, 0))
+            self.conditions.append(Condition(dragonfly, 1, 0.3, 1, 2))
+            self.conditions.append(Condition(big_body, 0, 0.6))
+
 
     class MoningStar(Pattern):
         def __init__(self, num=3) -> None:
             super().__init__(num)
+            self.conditions.append(Condition(bearish_candle, 0))
+            self.conditions.append(Condition(bullish_candle, 2))
+            self.conditions.append(Condition(big_body, 0, 0.6))
+            self.conditions.append(Condition(close_above_open, 0, 1))
+            self.conditions.append(Condition(close_under_open, 1, 2))
+            self.conditions.append(Condition(small_body, 1, 0.3))
+            self.conditions.append(Condition(bigger, 0, 1))
+            self.conditions.append(Condition(bigger, 2, 1))
+            self.conditions.append(Condition(lower, 1, 2))
+            self.conditions.append(Condition(lower, 1, 0))
+            self.conditions.append(Condition(high_under_open, 1, 0))
+            self.conditions.append(Condition(high_under_close, 1, 2))
 
 
 class Bearish:
@@ -106,22 +123,55 @@ class Bearish:
     class BearishHarami(Pattern):
         def __init__(self, num=2) -> None:
             super().__init__(num)
+            self.conditions.append(Condition(bullish_candle, 0))
+            self.conditions.append(Condition(bearish_candle, 1))
+            self.conditions.append(Condition(close_above_open, 0, 1))
+            self.conditions.append(Condition(close_above_open, 1, 0))
+            self.conditions.append(Condition(big_body, 0, 0.6))
 
     class BearishEngulfing(Pattern):
         def __init__(self, num=2) -> None:
             super().__init__(num)
-        
+            self.conditions.append(Condition(bullish_candle, 0))
+            self.conditions.append(Condition(bearish_candle, 1))
+            self.conditions.append(Condition(close_under_open, 0, 1))
+            self.conditions.append(Condition(close_under_open, 1, 0))
+            self.conditions.append(Condition(big_body, 1, 0.6))
+
+
     class GravestoneDoji(Pattern):
         def __init__(self, num=2) -> None:
             super().__init__(num)
+            self.conditions.append(Condition(bullish_candle, 0))
+            self.conditions.append(Condition(higher, 1, 0))
+            self.conditions.append(Condition(gravestone, 1, 3, 1, 1))
+            self.conditions.append(Condition(big_body, 0, 0.6))
+
 
     class HangingMan(Pattern):
         def __init__(self, num=2) -> None:
             super().__init__(num)
+            self.conditions.append(Condition(bullish_candle, 0))
+            self.conditions.append(Condition(higher, 1, 0))
+            self.conditions.append(Condition(dragonfly, 1, 0.3, 1, 2))
+            self.conditions.append(Condition(big_body, 0, 0.6))
+
 
     class EveningStar(Pattern):
         def __init__(self, num=3) -> None:
             super().__init__(num)
+            self.conditions.append(Condition(bullish_candle, 0))
+            self.conditions.append(Condition(bearish_candle, 2))
+            self.conditions.append(Condition(big_body, 0, 0.6))
+            self.conditions.append(Condition(close_under_open, 0, 1))
+            self.conditions.append(Condition(close_above_open, 1, 2))
+            self.conditions.append(Condition(small_body, 1, 0.3))
+            self.conditions.append(Condition(bigger, 0, 1))
+            self.conditions.append(Condition(bigger, 2, 1))
+            self.conditions.append(Condition(higher, 1, 2))
+            self.conditions.append(Condition(higher, 1, 0))
+            self.conditions.append(Condition(high_under_open, 1, 0))
+            self.conditions.append(Condition(high_under_close, 1, 2))
 
 
 class Condition:
@@ -156,7 +206,7 @@ def close_under_open(candlesticks: List[CandleStick], n1=0, n2=1):
     n1: int
         index of candlestick to compare close with another candlestick's open
     n2: int
-        index of candlestick to compare open with another candlestick's close
+        index of another candlestick
     '''
     c1 = candlesticks[n1]
     c2 = candlesticks[n2]
@@ -168,11 +218,35 @@ def close_above_open(candlesticks: List[CandleStick], n1=0, n2=1):
     n1: int
         index of candlestick to compare close with another candlestick's open
     n2: int
-        index of candlestick to compare open with another candlestick's close
+        index of another candlestick
     '''
     c1 = candlesticks[n1]
     c2 = candlesticks[n2]
     return c1.close > c2.open
+
+
+def high_under_open(candlesticks: List[CandleStick], n1=0, n2=1):
+    '''
+    n1: int
+        index of candlestick to compare high with another candlestick's open
+    n2: int
+        index of another candlestick
+    '''
+    c1 = candlesticks[n1]
+    c2 = candlesticks[n2]
+    return c1.high < c2.open
+
+
+def high_under_close(candlesticks: List[CandleStick], n1=0, n2=1):
+    '''
+    n1: int
+        index of candlestick to compare high with another candlestick's close
+    n2: int
+        index of another candlestick
+    '''
+    c1 = candlesticks[n1]
+    c2 = candlesticks[n2]
+    return c1.high < c2.close
 
 
 def lower(candlesticks: List[CandleStick], n1=0, n2=1):
@@ -185,6 +259,30 @@ def lower(candlesticks: List[CandleStick], n1=0, n2=1):
     c1 = candlesticks[n1]
     c2 = candlesticks[n2]
     return c1.low < c2.low
+
+
+def higher(candlesticks: List[CandleStick], n1=0, n2=1):
+    '''
+    n1: int
+        index of candlestick to check if its high is higher than another candlestick's high
+    n2: int
+        index of another candlestick
+    '''
+    c1 = candlesticks[n1]
+    c2 = candlesticks[n2]
+    return c1.high > c2.high
+
+
+def bigger(candlesticks: List[CandleStick], n1=0, n2=1):
+    '''
+    n1: int
+        index of candlestick to check if its body is bigger than another candlestick's body
+    n2: int
+        index of another candlestick
+    '''
+    c1 = candlesticks[n1]
+    c2 = candlesticks[n2]
+    return c1.body > c2.body
 
 
 def big_body(candlesticks: List[CandleStick], n=0, ratio=0.6):
