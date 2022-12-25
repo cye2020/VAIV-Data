@@ -166,15 +166,20 @@ class CandlstickChart:
             ax3.yaxis.set_visible(False)
             ax3.axis('off')
         
-        name = f'{ticker}_{trade_date}.png'
+        name = f'{ticker}_{trade_date}'
         fig.savefig(self.path / 'images' / name)
         pil_image = Image.open(self.path / 'images' / name)
         rgb_image = pil_image.convert('RGB')
-        rgb_image.save(self.path / 'images' / name)
+        rgb_image.save(self.path / 'images' / f'{name}.png')
         
         if pixel:
             pixel_coordinates = get_pixel(self.size, lines, patches, fig, stock)
-            pixel_coordinates.to_csv(self.path / 'pixels' / name)
+            pixel_coordinates.to_csv(self.path / 'pixels' / f'{name}.csv')
+
+    def load_pixel_coordinates(self, ticker, trade_date):
+        name = f'{ticker}_{trade_date}'
+        pixel_coordinates = pd.read_csv(self.path / 'pixels' / f'{name}.csv', index_col='Date')
+        return pixel_coordinates
 
 
 class CNNChart(CandlstickChart):
