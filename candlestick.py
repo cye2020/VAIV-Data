@@ -8,7 +8,7 @@ from utils import candlestick_ochl, volume_overlay, dataframe_empty_handler, inc
 
 
 class CandlstickChart:
-    def __init__(self, market, size, candle, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs) -> None:
+    def __init__(self, market: str, size, candle, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs) -> None:
         '''
         size: [width, height]
             the size of chart image
