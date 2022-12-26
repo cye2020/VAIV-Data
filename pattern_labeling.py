@@ -31,5 +31,5 @@ def pattern_labeling(data: pd.DataFrame):
                 })
                 labeling_list.append(bearish_labeling)
     
-    labeling = pd.concat(labeling_list).set_index('Label')
+    labeling = pd.concat(labeling_list)
     return labeling
