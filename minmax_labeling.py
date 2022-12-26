@@ -30,5 +30,5 @@ def minmax_labeling(data, period, span_thres):
         priority += 1
         span = period // dividend
         dividend *= 2
-    labeling = pd.concat(labeling_list).drop_duplicates(subset=['Date']).set_index('Label')
+    labeling = pd.concat(labeling_list).drop_duplicates(subset=['Date'])
     return labeling
