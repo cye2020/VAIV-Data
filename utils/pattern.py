@@ -50,6 +50,8 @@ class Bullish:
     def __init__(self) -> None:
         self.patterns = [self.BullishHarami(), self.BullishEngulfing(), \
             self.BullishDoji(), self.Hammer(), self.MoningStar()]
+        
+        self.nums = {p.__class__.__name__: p.num for p in self.patterns}
 
     def __call__(self, date, section) -> dict:
         result = dict()
@@ -113,7 +115,9 @@ class Bearish:
     def __init__(self) -> None:
         self.patterns = [self.BearishHarami(), self.BearishEngulfing(), \
             self.GravestoneDoji(), self.HangingMan(), self.EveningStar()]
-    
+
+        self.nums = {p.__class__.__name__: p.num for p in self.patterns}
+
     def __call__(self, date, section) -> dict:
         result = dict()
         for pattern in self.patterns:
