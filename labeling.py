@@ -117,6 +117,6 @@ class YoloLabeling(Labeling):
                     labeling = pattern_labeling(section)
                 
                 elif self.method == 'Merge':
-                    pass
+                    return
             else:
                 break
