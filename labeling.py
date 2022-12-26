@@ -2,7 +2,8 @@ import pandas as pd
 from pathlib import Path
 from stock import Stock
 from utils import dataframe_empty_handler
-from min_max_labeling import minmax_labeling
+from minmax_labeling import minmax_labeling
+from pattern_labeling import pattern_labeling
 
 
 class Labeling:
@@ -51,9 +52,9 @@ class CNNLabeling(Labeling):
         
         rows = [self.load_labeling()]
         for i in range(len(data)):
-            c = data.iloc[i: i + self.period, :]  # trading(input) data
+            section = data.iloc[i: i + self.period, :]  # trading(input) data
             try:
-                f = data.iloc[i + self.period + self.interval - 1, :]  # forecast answer data
+                forecast = data.iloc[i + self.period + self.interval - 1, :]  # forecast answer data
             except IndexError:
                 break
             
@@ -61,10 +62,10 @@ class CNNLabeling(Labeling):
             endvalue = 0
             label = ""
             
-            if len(c) == self.period:
+            if len(section) == self.period:
                 if self.method[1:] == "%_01_2":
-                    starting = c.iloc[-1, 'Close']
-                    endvalue = f['Close']
+                    starting = section.iloc[-1, 'Close']
+                    endvalue = forecast['Close']
                     
                     if endvalue >= (1 + (int(self.method[0])/100)) * starting:
                         label = 1
@@ -107,13 +108,13 @@ class YoloLabeling(Labeling):
         dates = data.index.tolist()
         
         for i in range(len(data)):
-            c = data.iloc[i: i + self.period, :]  # trading(input) data
-            if len(c) == self.period:
+            section = data.iloc[i: i + self.period, :]  # trading(input) data
+            if len(section) == self.period:
                 if self.method == 'MinMax':
-                    labeling = minmax_labeling(c, self.period, 10)
+                    labeling = minmax_labeling(section, self.period, 10)
                 
                 elif self.method == 'Pattern':
-                    pass
+                    labeling = pattern_labeling(section)
                 
                 elif self.method == 'Merge':
                     pass
