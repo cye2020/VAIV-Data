@@ -120,3 +120,13 @@ class YoloLabeling(Labeling):
                     return
             else:
                 break
+            
+            labeling.to_csv(self.path / f'{ticker}_{dates[i]}.csv', index=False)
+
+
+    @dataframe_empty_handler
+    def load_labeling(self, ticker, trade_date):
+        super().load_labeling()
+        labeling = pd.read_csv(self.path / f'{ticker}_{trade_date}.csv', index_col=0)
+        self.labeling = labeling
+        return labeling
