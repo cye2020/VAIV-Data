@@ -15,7 +15,7 @@ def make_ticker_candlesticks(chart: CandlstickChart, ticker, market, start='2006
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--name', '-n', type=str, dest='name', default='chart', help='the name of chart folder'
+        '--name', '-n', type=str, dest='name', default=None, help='the name of chart folder'
     )
     parser.add_argument(
         '--exist-ok', action='store_true',
