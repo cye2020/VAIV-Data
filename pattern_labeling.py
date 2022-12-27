@@ -4,6 +4,7 @@ from utils import Bullish, Bearish
 def pattern_labeling(data: pd.DataFrame):
     bullish = Bullish()
     bearish = Bearish()
+    patterns = list(bullish.nums.keys()) + list(bearish.nums.keys())
     
     dates = data.index.tolist()
     labeling_list = []
@@ -12,7 +13,7 @@ def pattern_labeling(data: pd.DataFrame):
         bearish_pattern = bearish(date, data)
         
         for pattern, check in bullish_pattern.items():
-            label = list(bullish.nums.keys()).index(pattern)
+            label = patterns.index(pattern)
             if check:
                 bullish_labeling = pd.DataFrame({
                     'Label': [label],
@@ -22,7 +23,7 @@ def pattern_labeling(data: pd.DataFrame):
                 labeling_list.append(bullish_labeling)
                 
         for pattern, check in bearish_pattern.items():
-            label = list(bearish.nums.keys()).index(pattern)
+            label = patterns.index(pattern)
             if check:
                 bearish_labeling = pd.DataFrame({
                     'Label': [label],
