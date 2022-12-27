@@ -15,14 +15,14 @@ def make_ticker_candlesticks(chart: CandlstickChart, ticker, market, start='2006
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        '--name', '-n', type=str, dest='name', default=None, help='the name of chart folder'
+        '--name', '-n', type=str, dest='name', default='chart', help='the name of chart folder'
     )
     parser.add_argument(
         '--exist-ok', action='store_true',
         help='existing project/name ok, do not increment'
     )
     parser.add_argument(
-        '--market', '-m', type=str, dest='market', required=True,
+        '--market', '-m', nargs='+', type=str, dest='market', required=True,
         help='You can input a market under options\n' + \
              'KOSPI: Stock market includes KOSPI only\n' + \
              'KOSDAQ: Stock market includes KOSDAQ only\n' + \
@@ -111,6 +111,9 @@ if __name__ == '__main__':
         
     num = args.number if args.number else len(tickers)
     
-    p = mp.Pool(16)
-    args_list = [[chart, ticker, args.market, args.start, args.end] for ticker in tickers[:num]]
-    p.starmap(make_ticker_candlesticks, args_list)
+    for market in args.market:
+        p = mp.Pool(16)
+        args_list = [[chart, ticker, market, args.start, args.end] for ticker in tickers[:num]]
+        p.starmap(make_ticker_candlesticks, args_list)
+        p.close()
+        p.join()
