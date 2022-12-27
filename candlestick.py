@@ -8,12 +8,12 @@ from utils import candlestick_ochl, volume_overlay, dataframe_empty_handler, inc
 
 
 class CandlstickChart:
-    def __init__(self, market: str, size, candle, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs) -> None:
+    def __init__(self, market: str, size, period, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs) -> None:
         '''
         size: [width, height]
             the size of chart image
-        candle: int
-            the number of candlesticks of a chart
+        period: int
+            the trading period of a chart
         linespace: float
             the distance of each candle
         candlewidth: float
@@ -25,7 +25,7 @@ class CandlstickChart:
         '''
         self.market = market.capitalize()
         self.size = size
-        self.candle = candle
+        self.period = period
         self.linespace = linespace
         self.candlewidth = candlewidth
         self.linewidth = linewidth
@@ -46,7 +46,7 @@ class CandlstickChart:
         new_info = pd.DataFrame({
             'Name': [name],
             'Size': [f'{size[0]}x{size[1]}'],
-            'candle': [candle],
+            'period': [period],
             'linespace': [linespace],
             'candlewidth': [candlewidth],
             'linewidth': [linewidth],
@@ -73,7 +73,7 @@ class CandlstickChart:
         '''
         feature: dict
             Determine whether or not to use Volume, SMA, EMA, or MACD
-            {'volume': bool, 'SMA': [periods], 'EMA': [periods], 'MACD': [short, long, oscillator]}
+            {'volume': bool, 'SMA': [periods], 'EMA': [periods], 'MACD': [short, long, signal]}
         color: dict
             colors of each feature
             {'up': bullish candlesticks, 'down': bearish candlesticks, 'SMA': [each SMA], 'EMA': [each 
@@ -96,7 +96,7 @@ class CandlstickChart:
         data = stock.load_data()
         dates = data.index.tolist()
         trade_index = dates.index(trade_date)
-        start_index = trade_index - self.candle + 1
+        start_index = trade_index - self.period + 1
         
         if start_index < 0:
             return
@@ -119,7 +119,7 @@ class CandlstickChart:
         plt.tight_layout(pad=0)
         fig.set_constrained_layout_pads(w_pad=0, h_pad=0)
         
-        t = np.arange(1, self.candle * self.linespace+1, self.linespace)
+        t = np.arange(1, self.period * self.linespace+1, self.linespace)
         quote = c[['Open', 'Close', 'High', 'Low']]
         quote.insert(0, 't', t)
         quote.reset_index(drop=True, inplace=True)
@@ -187,7 +187,7 @@ class CNNChart(CandlstickChart):
         self,
         market='Kospi',
         size=[224, 224],
-        candle=20,
+        period=20,
         linespace=1,
         candlewidth=0.8,
         linewidth=1,
@@ -196,7 +196,7 @@ class CNNChart(CandlstickChart):
         exist_ok=False,
         **kwargs,
     ) -> None:
-        super().__init__(market, size, candle, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs)
+        super().__init__(market, size, period, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs)
     
 
 class YoloChart(CandlstickChart):
@@ -204,7 +204,7 @@ class YoloChart(CandlstickChart):
         self,
         market='Kospi',
         size=[1800, 650],
-        candle=245,
+        period=245,
         linespace=1,
         candlewidth=0.8,
         linewidth=1800/224,
@@ -213,7 +213,7 @@ class YoloChart(CandlstickChart):
         exist_ok=False,
         **kwargs
     ) -> None:
-        super().__init__(size, market, candle, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs)
+        super().__init__(size, market, period, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs)
         
 
 def subplots(volume, MACD):
@@ -262,7 +262,7 @@ def get_config(name):
     raw = info.loc[name]
     config = raw.replace(np.nan, '')
     size = list(map(int, config['Size'].split('x')))
-    candle = int(config['candle'])
+    period = int(config['period'])
     linespace = float(config['linespace'])
     candlewidth = float(config['candlewidth'])
     linewidth = float(config['linewidth'])
@@ -279,7 +279,7 @@ def get_config(name):
     
     config_dict = {
         'size': size,
-        'candle': candle,
+        'period': period,
         'linespace': linespace,
         'candlewidth': candlewidth,
         'linewidth': linewidth,

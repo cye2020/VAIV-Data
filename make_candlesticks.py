@@ -52,7 +52,7 @@ if __name__ == '__main__':
         '--size', nargs='+', type=int, dest='size', default=argparse.SUPPRESS, help='the size of chart image'
     )
     config.add_argument(
-        '--candle', type=int, default=argparse.SUPPRESS, help='the number of candlesticks of a chart'
+        '--period', type=int, default=argparse.SUPPRESS, help='the trading period of a chart'
     )
     config.add_argument(
         '--linespace', '-ls', type=float, default=argparse.SUPPRESS, help='the distance of each candle'
@@ -73,13 +73,13 @@ if __name__ == '__main__':
         '--volume', '-v', type=bool, default=argparse.SUPPRESS, help='chart with volume'
     )
     feature.add_argument(
-        '--SMA', '-sma', nargs='+', type=int, default=argparse.SUPPRESS, help='the list of SMA period list'
+        '--SMA', '-sma', nargs='+', type=int, default=argparse.SUPPRESS, help='the list of Simple Moving Average period list'
     )
     feature.add_argument(
-        '--EMA', '-ema', nargs='+', type=int, default=argparse.SUPPRESS, help='the list of EMA period list'
+        '--EMA', '-ema', nargs='+', type=int, default=argparse.SUPPRESS, help='the list of Exponential Moving Average period list'
     )
     feature.add_argument(
-        '--MACD', '-macd', nargs='+', type=int, default=argparse.SUPPRESS, help='MACD short period, long period, oscillator period'
+        '--MACD', '-macd', nargs='+', type=int, default=argparse.SUPPRESS, help='MACD short period, long period, signal period'
     )
     
     color = parser.add_argument_group('Color')
