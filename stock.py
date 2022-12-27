@@ -88,8 +88,8 @@ class FeatureStock(Stock):
 
 class StockMarket:
     def __init__(self, market='ALL') -> None:
-        self.market = market
-        self.tickers = sorted(stock.get_market_ticker_list(market=market))
+        self.market =  market.upper()
+        self.tickers = sorted(stock.get_market_ticker_list(market=self.market))
         
     def update_datas(self):
         for ticker in self.tickers:
