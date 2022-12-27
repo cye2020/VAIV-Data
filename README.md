@@ -33,6 +33,8 @@ Data
 ### 2.2 Make Candlestick Chart
 make candlestick chart from stock historical data
 
+<img src="./Image/224x224/Kospi/images/000020_2022-12-01.png" width="224px" height="224px" title="px(픽셀) 크기 설정" alt="RubberDuck"></img><br/>
+
 __Select market, base style, and the number of tickers__
 ```
 # make candlestick chart of both kospi and kosdaq markets in Yolo folder based on yolo default setting
@@ -80,6 +82,20 @@ Data
 
 
 ### 2.3 Update
+update stock hitorical data and candlestick chart everyday
+
+First, set markets and candlestick chart folder names in _update.bash_
+```
+market=("kospi" "kosdaq")
+names=("224x224" "1800x650")
+```
+
+run update.bash via cron
+```
+# execute "crontab -e" and add this line. Write absolute path of update.bash
+0 0 * * * /home/user/Data/update.bash
+```
+
 ### 2.4 Labeling
 ### 2.5 Make Dataset
 
