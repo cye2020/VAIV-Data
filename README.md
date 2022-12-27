@@ -17,17 +17,17 @@ download stock historical data using [FinanceDataReader](https://github.com/fina
 python make_stocks.py -m kospi kosdaq
 ```
 
-Download Directory
+__Download Directory__
 
 ```
 Data
-├── Stock
-│   ├── Kosdaq
-│       ├── 000250.csv
-│       └── ...
-│   └── Kospi
-│       ├── 000020.csv
-│       └── ...
+└── Stock
+    ├── Kosdaq
+    │   ├── 000250.csv
+    │   └── ...
+    └── Kospi
+        ├── 000020.csv
+        └── ...
 ```
 
 ### 2.2 Make Candlestick Chart
@@ -65,6 +65,20 @@ __Adjust chart setting__
 # trading period 250, image size 1600 × 500
 python make_candlesticks -n Yolo -m kospi kosdaq --yolo --period 250 --size 1600 500
 ```
+
+__Directory__
+
+```
+Data
+└── Image
+    └── {name}
+        └── Kospi
+            └── images
+                ├── 000020_2022-12-01.png
+                └── ...
+```
+
+
 ### 2.3 Update
 ### 2.4 Labeling
 ### 2.5 Make Dataset
