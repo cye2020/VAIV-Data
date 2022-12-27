@@ -97,6 +97,26 @@ run update.bash via cron
 ```
 
 ### 2.4 Labeling
+
+#### 2.4.1 CNN Labeling
+```
+# n%_01_2 Labeling, n = 4
+python make_labeling.py --cnn -m kospi kosdaq --method 4%_01_2
+```
+
+#### 2.4.2 Yolo Labeling
+
+```
+# MinMax Labeling
+python make_labeling.py --yolo -m kospi --method MinMax
+
+# Pattern Labeling
+python make_labeling.py --yolo -m kospi --method Pattern
+
+# Merge Labeling
+python make_labeling.py --yolo -m kospi --method Merge
+
+```
 ### 2.5 Make Dataset
 
 ```python
