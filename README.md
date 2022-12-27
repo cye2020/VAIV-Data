@@ -13,20 +13,27 @@ pip install -r requirements.txt
 download stock historical data using [FinanceDataReader](https://github.com/financedata-org/FinanceDataReader)
 
 ```
-# make all stock historical data in kospi and kosdaq
+# download all stock historical data in kospi and kosdaq
 python make_stocks.py -m kospi kosdaq
 ```
 
+Download Directory
+
+```
+Data
+├── Stock
+│   ├── Kosdaq
+│       ├── 000250.csv
+│       └── …
+│   └── Kospi
+│       ├── 000020.csv
+│       └── …
+```
 
 ### 2.2 Make Candlestick Chart
 ### 2.3 Update
 ### 2.4 Labeling
 ### 2.5 Make Dataset
-
-
-```
-pip install
-```
 
 ```python
 import 
