@@ -1,3 +1,30 @@
+'''
+1. CNN Labeling
+
+1.1 n%_01_2 Labeling
+    only certain rising date is set to '1'
+    - 0: close price declines
+    - 1: close price rises more than 4 percent
+
+
+2. Yolo Labeling
+
+2.1 MinMax Labeling
+    find minimum and maximum close date and halve a section. Repeat this.
+    - 0: date when close price is maximum in section
+    - 1: date when close price is minimum in section
+
+2.2 Pattern Labeling
+    5 Bullish candlestick pattern and 5 Bearish candlestick pattern
+    - 0 ~ 4: Bullish candlestick pattern
+    - 5 ~ 9: Bearish candlestick pattern
+
+2.3 Merge Labeling
+    Base on MinMax Labeling, write ovelapped Pattern Labeling (0: bullish, 1: bearish)
+    - 0: 0 Label in MinMax Labeling
+    - 1: 1 Label in MinMax Labeling
+
+'''
 import pandas as pd
 from pathlib import Path
 from stock import Stock
