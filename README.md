@@ -82,7 +82,9 @@ Data
                 ├── 000020_2022-12-01.csv
                 └── ...
 ```
+Image file name: {ticker}_{last date of candlestick chart}.png
 
+pixels: there are csv files mapping __trade date__ to __pixel coordinates__.
 
 ### 2.3 Update
 update stock hitorical data and candlestick chart everyday
