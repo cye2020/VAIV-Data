@@ -112,12 +112,12 @@ class CNNLabeling(Labeling):
                 rows.append(row)
             
         labeling = pd.concat(rows)
-        labeling.to_csv(self.path / f'{self.period}days_{self.interval}after' / 'labeling.csv', index=False)
+        labeling.to_csv(self.path / f'labeling_{self.period}_{self.interval}.csv', index=False)
     
     @dataframe_empty_handler
     def load_labeling(self):
         super().load_labeling()
-        labeling = pd.read_csv(self.path / f'{self.period}days_{self.interval}after' / 'labeling.csv', index_col=0)
+        labeling = pd.read_csv(self.path / f'labeling_{self.period}_{self.interval}.csv', index_col=0)
         self.labeling = labeling
         return labeling
 
