@@ -34,7 +34,7 @@ from pattern_labeling import pattern_labeling
 
 
 class Labeling:
-    def __init__(self, method, period) -> None:
+    def __init__(self, market: str, method: str, period: int) -> None:
         '''
         method: str
             the method of labeling
@@ -45,10 +45,11 @@ class Labeling:
             input n period stock data to model
         '''
         self.path = Path.cwd() / 'Labeling'
+        self.market = market.capitalize()
         self.method = method
         self.period = period
     
-    def process_labeling(self):
+    def process_labeling(self, ticker, start, end):
         pass
     
     def load_labeling(self):
@@ -56,7 +57,7 @@ class Labeling:
     
 
 class CNNLabeling(Labeling):
-    def __init__(self, period, interval, method='4%_01_2') -> None:
+    def __init__(self, market, period=20, interval=5, method='4%_01_2', **kwargs) -> None:
         '''
         interval: int
             forecast interval
@@ -67,13 +68,14 @@ class CNNLabeling(Labeling):
             1: after interval, if close price increase more than n%
             0: after interval, if close price decrease
         '''
-        super().__init__(method, period)
-        self.path = self.path / 'CNN' / self.method
+        super().__init__(market, method, period)
+        self.path = self.path / 'CNN' / self.market / self.method
         self.interval = interval
+        self.path.mkdir(parents=True, exist_ok=True)
        
-    def process_labeling(self, ticker, market='ALL'):
-        super().process_labeling()
-        stock = Stock(ticker, market)
+    def process_labeling(self, ticker, start='2006', end='a'):
+        super().process_labeling(ticker, start, end)
+        stock = Stock(ticker, self.market)
         data = stock.load_data()
         dates = data.index.tolist()
         
@@ -117,25 +119,27 @@ class CNNLabeling(Labeling):
     @dataframe_empty_handler
     def load_labeling(self):
         super().load_labeling()
-        labeling = pd.read_csv(self.path / f'labeling_{self.period}_{self.interval}.csv', index_col=0)
+        labeling = pd.read_csv(self.path / f'labeling_{self.period}_{self.interval}.csv', index_col=False)
         self.labeling = labeling
         return labeling
 
 
 class YoloLabeling(Labeling):
-    def __init__(self, method, period) -> None:
-        super().__init__(method, period)
-        self.path = self.path / 'Yolo' / self.method
+    def __init__(self, market: str, method: str, period=245, **kwargs) -> None:
+        super().__init__(market, method, period)
+        self.path = self.path / 'Yolo' / self.market / self.method
+        self.path.mkdir(parents=True, exist_ok=True)
         
-        
-    def process_labeling(self, ticker, market='ALL'):
-        super().process_labeling()
-        stock = Stock(ticker, market)
+    def process_labeling(self, ticker, start='2006', end='a'):
+        super().process_labeling(ticker, start, end)
+        stock = Stock(ticker, self.market)
         data = stock.load_data()
         dates = data.index.tolist()
+        trade_dates = [d for d in dates if (d >= start) & (d < end)]
         
-        for i in range(len(data)):
-            section = data.iloc[i: i + self.period, :]  # trading(input) data
+        for trade_date in trade_dates:
+            i = dates.index(trade_date)
+            section = data.iloc[i - self.period + 1: i + 1, :]  # trading(input) data
             if len(section) == self.period:
                 if self.method == 'MinMax':
                     labeling = minmax_labeling(section, self.period, 10)
@@ -145,15 +149,14 @@ class YoloLabeling(Labeling):
                 
                 elif self.method == 'Merge':
                     return
+                labeling.to_csv(self.path / f'{ticker}_{trade_date}.csv', index=False)
             else:
                 break
-            
-            labeling.to_csv(self.path / f'{ticker}_{dates[i]}.csv', index=False)
 
 
     @dataframe_empty_handler
     def load_labeling(self, ticker, trade_date):
         super().load_labeling()
-        labeling = pd.read_csv(self.path / f'{ticker}_{trade_date}.csv', index_col=0)
+        labeling = pd.read_csv(self.path / f'{ticker}_{trade_date}.csv', index_col=False)
         self.labeling = labeling
         return labeling
