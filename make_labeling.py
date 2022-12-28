@@ -50,6 +50,9 @@ if __name__ == '__main__':
         '--forecast-interval', '-interval', dest='interval', type=int, default=argparse.SUPPRESS,
         help='predict n interval after the last input period'
     )
+    parser.add_argument(
+        '--name', '-n', type=str, dest='name', default=None, help='the name of chart folder'
+    )
     
     args = parser.parse_args()
     kwargs = args.__dict__
