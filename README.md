@@ -33,7 +33,7 @@ Data
 ### 2.2 Make Candlestick Chart
 make candlestick chart from stock historical data
 
-<img src="./Image/224x224/Kospi/images/000020_2022-12-01.png" width="224px" height="224px" title="px(픽셀) 크기 설정" alt="RubberDuck"></img><br/>
+<img src="./Image/224x224/Kospi/images/000020_2022-12-01.png" width="224px" height="224px" title="Candlestick Chart Sample" alt="CNN Chart"></img><br/>
 
 __Select market, base style, and the number of tickers__
 ```
@@ -75,8 +75,11 @@ Data
 └── Image
     └── {name}
         └── Kospi
-            └── images
-                ├── 000020_2022-12-01.png
+            ├── images
+            │   ├── 000020_2022-12-01.png
+            │   └── ...
+            └── pixels
+                ├── 000020_2022-12-01.csv
                 └── ...
 ```
 
@@ -109,7 +112,11 @@ python make_labeling.py --cnn -m kospi kosdaq --method 4%_01_2
 ```
 # MinMax Labeling
 python make_labeling.py --yolo -m kospi --method MinMax
+```
 
+<img src="./Sample/MinMax_000020_2022-12-01.png" width="1800px" height="650px" title="MinMax Labeling Sample" alt="MinMax Labeling"></img><br/>
+
+```
 # Pattern Labeling
 python make_labeling.py --yolo -m kospi --method Pattern
 
