@@ -2,7 +2,8 @@ import argparse
 from stock import StockMarket, Stock
 from candlestick import CNNChart, YoloChart, CandlstickChart
 import multiprocessing as mp
-
+import warnings
+warnings.filterwarnings(action='ignore')
 
 def make_ticker_candlesticks(chart: CandlstickChart, ticker, market, start='2006', end='a'):
     data = Stock(ticker, market).load_data()
@@ -99,19 +100,19 @@ if __name__ == '__main__':
         '--MACDColor', '-mc', nargs='+', type=str, default=argparse.SUPPRESS, help='the color of MACD and MACD oscillator'
     )
     args = parser.parse_args()
-    tickers = StockMarket(args.market.upper()).tickers
     
     kwargs = args.__dict__
     
-    if args.cnn:
-        chart = CNNChart(**kwargs)
-    
-    else:
-        chart = YoloChart(**kwargs)
-        
-    num = args.number if args.number else len(tickers)
-    
     for market in args.market:
+        tickers = StockMarket(market.upper()).tickers
+        num = args.number if args.number else len(tickers)
+        kwargs['market'] = market
+        if args.cnn:
+            chart = CNNChart(**kwargs)
+        
+        else:
+            chart = YoloChart(**kwargs)
+    
         p = mp.Pool(16)
         args_list = [[chart, ticker, market, args.start, args.end] for ticker in tickers[:num]]
         p.starmap(make_ticker_candlesticks, args_list)
