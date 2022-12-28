@@ -114,7 +114,7 @@ python make_labeling.py --cnn -m kospi kosdaq --method 4%_01_2
 python make_labeling.py --yolo -m kospi --method MinMax
 ```
 
-<img src="./Sample/MinMax_000020_2022-12-01.png" width="720px" height="260px" title="MinMax Labeling Sample" alt="MinMax Labeling"></img><br/>
+<img src="./Sample/MinMax_000020_2022-11-01.png" width="720px" height="260px" title="MinMax Labeling Sample" alt="MinMax Labeling"></img><br/>
 
 ```
 # Pattern Labeling
