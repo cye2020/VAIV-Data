@@ -119,6 +119,10 @@ python make_labeling.py --yolo -m kospi --method Merge
 ```
 ### 2.5 Make Dataset
 
-```python
-import 
+```
+# make dataset based on cnn default setting
+python make_dataset.py --cnn
+
+# make dataset based on cnn default setting
+python make_dataset.py --yolo
 ```
