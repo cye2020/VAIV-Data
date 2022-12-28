@@ -32,6 +32,7 @@ from utils import dataframe_empty_handler
 from minmax_labeling import minmax_labeling
 from pattern_labeling import pattern_labeling
 from merge_labeling import merge_labeling
+from candlestick import get_config
 
 
 class Labeling:
@@ -96,7 +97,7 @@ class CNNLabeling(Labeling):
             
             if len(section) == self.period:
                 if self.method[1:] == "%_01_2":
-                    starting = section.iloc[-1, 'Close']
+                    starting = section.loc[trade_date, 'Close']
                     endvalue = forecast['Close']
                     
                     if endvalue >= (1 + (int(self.method[0])/100)) * starting:
@@ -128,10 +129,16 @@ class CNNLabeling(Labeling):
 
 
 class YoloLabeling(Labeling):
-    def __init__(self, market: str, method: str, period=245, **kwargs) -> None:
+    def __init__(self, market: str, method: str, period=245, name=None, **kwargs) -> None:
+        '''
+        name: str
+            Candlestick Chart folder name
+            It is necessary to Merge Labeling
+        '''
         super().__init__(market, method, period)
         self.path = self.path / 'Yolo' / self.market / self.method
         self.path.mkdir(parents=True, exist_ok=True)
+        self.name = name
         
     def process_labeling(self, ticker, start='2006', end='a'):
         super().process_labeling(ticker, start, end)
@@ -153,13 +160,19 @@ class YoloLabeling(Labeling):
                 elif self.method == 'Merge':
                     # load MinMax Labeling
                     self.change_method('MinMax')
-                    minmax = self.load_labeling(self, ticker, trade_date)
+                    minmax = self.load_labeling(ticker, trade_date)
                     
                     # load Pattern Labeling
                     self.change_method('Pattern')
-                    patterns = self.load_labeling(self, ticker, trade_date)
+                    patterns = self.load_labeling(ticker, trade_date)
                     
-                    labeling = merge_labeling(data, minmax, patterns, 4, 2)
+                    # get candlestick chart config
+                    config = get_config(self.name)
+                    labeling = merge_labeling(section, ticker, trade_date, minmax, patterns, config, 4, 2)
+                    self.change_method('Merge')
+                    
+                    if labeling is None:
+                        continue
                     
                 labeling.to_csv(self.path / f'{ticker}_{trade_date}.csv', index=False)
             else:
