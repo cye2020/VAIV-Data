@@ -41,8 +41,7 @@ class CandlstickChart:
             info = pd.read_csv(Path.cwd() / 'Image' / 'info.csv', index_col='Name')
         except FileNotFoundError:
             info = pd.DataFrame()
-        if name in info.index.tolist():
-            return
+
         new_info = pd.DataFrame({
             'Name': [name],
             'Size': [f'{size[0]}x{size[1]}'],
@@ -62,6 +61,7 @@ class CandlstickChart:
             'MACDColor': ['_'.join(self.color.get('MACD'))],
         })
         info = pd.concat([info, new_info.set_index('Name')])
+        info = info[~info.index.duplicated(keep='last')]
         info.to_csv(Path.cwd() / 'Image' / 'info.csv')
         
     def set_default(
@@ -167,19 +167,23 @@ class CandlstickChart:
             ax3.axis('off')
         
         name = f'{ticker}_{trade_date}'
-        fig.savefig(self.path / 'images' / name)
-        pil_image = Image.open(self.path / 'images' / name)
+        fig.savefig(self.path / 'images' / f'{name}.png')
+        pil_image = Image.open(self.path / 'images' / f'{name}.png')
         rgb_image = pil_image.convert('RGB')
         rgb_image.save(self.path / 'images' / f'{name}.png')
         
         if pixel:
-            pixel_coordinates = get_pixel(self.size, lines, patches, fig, stock)
+            pixel_coordinates = get_pixel(self.size, lines, patches, fig, c)
             pixel_coordinates.to_csv(self.path / 'pixels' / f'{name}.csv')
 
     def load_pixel_coordinates(self, ticker, trade_date):
         name = f'{ticker}_{trade_date}'
         pixel_coordinates = pd.read_csv(self.path / 'pixels' / f'{name}.csv', index_col='Date')
         return pixel_coordinates
+
+    def load_chart_path(self, ticker, trade_date):
+        name = f'{ticker}_{trade_date}'
+        return self.path / 'images' / f'{name}.png'
 
 
 class CNNChart(CandlstickChart):
@@ -213,7 +217,7 @@ class YoloChart(CandlstickChart):
         exist_ok=False,
         **kwargs
     ) -> None:
-        super().__init__(size, market, period, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs)
+        super().__init__(market, size, period, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs)
         
 
 def subplots(volume, MACD):
