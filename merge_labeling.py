@@ -47,12 +47,13 @@ def minmax_drange(stock, trade_date, left_thres, right_thres, temp) -> list:
     return stock.loc[left_most:right_most].index.tolist()
 
 
-def merge_labeling(stock, ticker, trade_date, minmax: pd.DataFrame, patterns: pd.DataFrame, config, left_thres, right_thres):
+def merge_labeling(stock: pd.DataFrame, ticker, trade_date, minmax: pd.DataFrame, patterns: pd.DataFrame, config, left_thres, right_thres):
     labeling_list = []
     before_drange = {'Label': -1, 'Date': 'empty', 'Range': []}
     chart = YoloChart(market=Stock(ticker).market, exist_ok=True, **config)
     pixel = chart.load_pixel_coordinates(ticker=ticker, trade_date=trade_date)
-    
+    dates = stock.index.tolist()
+
     for row in minmax.to_dict('records'):
         label = row.get('Label')
         minmax_date = row.get('Date')
@@ -61,7 +62,10 @@ def merge_labeling(stock, ticker, trade_date, minmax: pd.DataFrame, patterns: pd
         temp = -1 if label==1 else 1
         
         drange = minmax_drange(stock, minmax_date, left_thres, right_thres, temp)
-        if (minmax_date == drange[0]) | (minmax_date == drange[-1]):
+        condition1 = drange.index(minmax_date) in [0, len(drange) - 1]
+        condition2 = dates.index(minmax_date) not in [0, len(dates) - 1]
+        condition3 = len(drange) < 3
+        if condition1 & condition2 & condition3:
             continue
         
         pattern = []
