@@ -1,3 +1,4 @@
+from tqdm import tqdm
 import time
 import pandas as pd
 from pathlib import Path
@@ -56,14 +57,14 @@ class Stock:
 
 
 class FeatureStock(Stock):
-    def __init__(self, ticker, market='ALL', directory=None, volume=False, SMA=[], EMA=[], MACD=[0, 0, 0]) -> None:
+    def __init__(self, ticker, market='ALL', volume=False, SMA=[], EMA=[], MACD=[0, 0, 0]) -> None:
         '''
         volume: if include volume feature, True. Else, False.
         SMA: simple moving average period list
         EMA: exponential moving average period list
         MACD: [short period, longer period, oscillator period]
         '''
-        super().__init__(ticker, market, directory)
+        super().__init__(ticker, market)
         self.volume = volume
         self.SMA = SMA
         self.EMA = EMA
@@ -92,6 +93,11 @@ class StockMarket:
         self.tickers = sorted(stock.get_market_ticker_list(market=self.market))
         
     def update_datas(self):
+        '''
+        If you want to see progress bar, modify code to
+            for i, ticker in enumerate(tqdm(self.tickers)):
+        '''
         for ticker in self.tickers:
             s = Stock(ticker, market=self.market)
             s.update_data()
+            time.sleep(1)
