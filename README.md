@@ -126,3 +126,8 @@ python make_dataset.py --cnn
 # make dataset based on cnn default setting
 python make_dataset.py --yolo
 ```
+
+
+## 3. Reference
+
+> Martinssson, F., & Liljeqvist, I. (2017). Short-Term Stock Market Prediction Based on Candlestick Pattern Analysis.
