@@ -26,14 +26,14 @@ class Pattern:
             How many candlestick is needed for checking pattern
         '''
         self.num = num
-        self.conditions = List[Condition]
+        self.conditions = list()
     
     def __call__(self, date, section) -> bool:
         dates = section.index.tolist()
         i = dates.index(date)
         
         if i < (len(dates) - (self.num - 1)):
-            candlesticks = [CandleStick(section.loc[dates[i+n], 'Open':'Close'].tolist()) \
+            candlesticks = [CandleStick(*tuple(section.loc[dates[i+n], 'Open':'Close'].tolist())) \
                 for n in range(self.num)]
             return self.condition_check(candlesticks)
         return False
@@ -42,9 +42,8 @@ class Pattern:
         check = []
         for condition in self.conditions:
             check.append(condition(candlesticks))
-        return False not in condition  # return True when satisfying all condition
+        return False not in check  # return True when satisfying all condition
             
-
 
 class Bullish:
     def __init__(self) -> None:
