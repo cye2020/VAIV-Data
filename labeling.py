@@ -31,6 +31,7 @@ from stock import Stock
 from utils import dataframe_empty_handler
 from minmax_labeling import minmax_labeling
 from pattern_labeling import pattern_labeling
+from merge_labeling import merge_labeling
 
 
 class Labeling:
@@ -78,12 +79,14 @@ class CNNLabeling(Labeling):
         stock = Stock(ticker, self.market)
         data = stock.load_data()
         dates = data.index.tolist()
+        trade_dates = [d for d in dates if (d >= start) & (d < end)]
         
         rows = [self.load_labeling()]
-        for i in range(len(data)):
-            section = data.iloc[i: i + self.period, :]  # trading(input) data
+        for trade_date in trade_dates:
+            i = dates.index(trade_date)
+            section = data.iloc[i - self.period + 1: i + 1, :]  # trading(input) data
             try:
-                forecast = data.iloc[i + self.period + self.interval - 1, :]  # forecast answer data
+                forecast = data.iloc[i + self.interval, :]  # forecast answer data
             except IndexError:
                 break
             
@@ -107,7 +110,7 @@ class CNNLabeling(Labeling):
                     return
                 
                 row = pd.DataFrame({
-                    'Date': [dates[i]],
+                    'Date': [trade_date],
                     'Ticker': [ticker],
                     'Label': [label]
                 })
@@ -148,7 +151,16 @@ class YoloLabeling(Labeling):
                     labeling = pattern_labeling(section)
                 
                 elif self.method == 'Merge':
-                    return
+                    # load MinMax Labeling
+                    self.change_method('MinMax')
+                    minmax = self.load_labeling(self, ticker, trade_date)
+                    
+                    # load Pattern Labeling
+                    self.change_method('Pattern')
+                    patterns = self.load_labeling(self, ticker, trade_date)
+                    
+                    labeling = merge_labeling(data, minmax, patterns, 4, 2)
+                    
                 labeling.to_csv(self.path / f'{ticker}_{trade_date}.csv', index=False)
             else:
                 break
@@ -160,3 +172,8 @@ class YoloLabeling(Labeling):
         labeling = pd.read_csv(self.path / f'{ticker}_{trade_date}.csv', index_col=False)
         self.labeling = labeling
         return labeling
+    
+    def change_method(self, method: str):
+        self.method = method
+        self.path = self.path.parent / self.method
+        self.path.mkdir(parents=True, exist_ok=True)
