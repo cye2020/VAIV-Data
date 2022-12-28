@@ -61,7 +61,7 @@ def merge_labeling(stock, ticker, trade_date, minmax: pd.DataFrame, patterns: pd
         temp = -1 if label==1 else 1
         
         drange = minmax_drange(stock, minmax_date, left_thres, right_thres, temp)
-        if len(drange) < 3:
+        if (minmax_date == drange[0]) | (minmax_date == drange[-1]):
             continue
         
         pattern = []
