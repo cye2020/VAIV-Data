@@ -103,7 +103,7 @@ def merge_labeling(stock, ticker, trade_date, minmax: pd.DataFrame, patterns: pd
         before_drange = {'Label': label, 'Date': minmax_date, 'Range': drange}
     
     try:
-        labeling = pd.concat(labeling_list).set_index('Label')
+        labeling = pd.concat(labeling_list)
     except ValueError:  # minmax나 pattern이 없다
         print('MinMax or Pattern is empty!')
         print(ticker, trade_date)
