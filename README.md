@@ -121,11 +121,20 @@ python make_labeling.py --yolo -m kospi --method MinMax
 ```
 # Pattern Labeling
 python make_labeling.py --yolo -m kospi --method Pattern
+```
+<img src="./Sample/Pattern_000020_2022-12-01.png" width="720px" height="260px" title="Pattern Labeling Sample" alt="Pattern Labeling"></img><br/>
 
+
+
+```
 # Merge Labeling
 python make_labeling.py --yolo -m kospi --method Merge
 
 ```
+<img src="./Sample/Merge_000020_2022-12-01.png" width="720px" height="260px" title="Merge Labeling Sample" alt="Merge Labeling"></img><br/>
+
+
+
 ### 2.5 Make Dataset
 
 ```
