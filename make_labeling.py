@@ -1,6 +1,8 @@
 import argparse
 from labeling import CNNLabeling, YoloLabeling, Labeling
 from stock import StockMarket
+import warnings
+warnings.filterwarnings("ignore", category=RuntimeWarning) 
 
 
 def make_labeling(market, number, labeling: Labeling, start='2006', end='a'):
