@@ -174,7 +174,7 @@ class YoloLabeling(Labeling):
                     if labeling is None:
                         continue
                     
-                labeling.to_csv(self.path / f'{ticker}_{trade_date}.csv', index=False)
+                labeling.to_csv(self.path / f'{ticker}_{trade_date}_{self.period}.csv', index=False)
             else:
                 break
 
@@ -182,7 +182,7 @@ class YoloLabeling(Labeling):
     @dataframe_empty_handler
     def load_labeling(self, ticker, trade_date):
         super().load_labeling()
-        labeling = pd.read_csv(self.path / f'{ticker}_{trade_date}.csv', index_col=False)
+        labeling = pd.read_csv(self.path / f'{ticker}_{trade_date}_{self.period}.csv', index_col=False)
         self.labeling = labeling
         return labeling
     
