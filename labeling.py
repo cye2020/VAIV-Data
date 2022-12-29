@@ -27,8 +27,9 @@
 '''
 import pandas as pd
 from pathlib import Path
+import random
 from stock import Stock
-from utils import dataframe_empty_handler
+from utils import dataframe_empty_handler, Bullish, Bearish
 from minmax_labeling import minmax_labeling
 from pattern_labeling import pattern_labeling
 from merge_labeling import merge_labeling
@@ -36,7 +37,7 @@ from candlestick import get_config
 
 
 class Labeling:
-    def __init__(self, market: str, method: str, period: int) -> None:
+    def __init__(self, market: str, method: str, period: int, **kwargs) -> None:
         '''
         method: str
             the method of labeling
@@ -46,10 +47,14 @@ class Labeling:
             trading period (= the number of candlestick chart candles)
             input n period stock data to model
         '''
+        if 'undefined' in kwargs:
+            return
         self.path = Path.cwd() / 'Labeling'
         self.market = market.capitalize()
         self.method = method
         self.period = period
+        self.labels = list()
+        self.labeling = pd.DataFrame()
     
     def process_labeling(self, ticker, start, end):
         pass
@@ -80,11 +85,11 @@ class CNNLabeling(Labeling):
         stock = Stock(ticker, self.market)
         data = stock.load_data()
         dates = data.index.tolist()
-        trade_dates = [d for d in dates if (d >= start) & (d < end)]
+        last_dates = [d for d in dates if (d >= start) & (d < end)]
         
         rows = [self.load_labeling()]
-        for trade_date in trade_dates:
-            i = dates.index(trade_date)
+        for last_date in last_dates:
+            i = dates.index(last_date)
             section = data.iloc[i - self.period + 1: i + 1, :]  # trading(input) data
             try:
                 forecast = data.iloc[i + self.interval, :]  # forecast answer data
@@ -97,7 +102,8 @@ class CNNLabeling(Labeling):
             
             if len(section) == self.period:
                 if self.method[1:] == "%_01_2":
-                    starting = section.loc[trade_date, 'Close']
+                    self.labels = [0, 1]
+                    starting = section.loc[last_date, 'Close']
                     endvalue = forecast['Close']
                     
                     if endvalue >= (1 + (int(self.method[0])/100)) * starting:
@@ -111,7 +117,7 @@ class CNNLabeling(Labeling):
                     return
                 
                 row = pd.DataFrame({
-                    'Date': [trade_date],
+                    'Date': [last_date],
                     'Ticker': [ticker],
                     'Label': [label]
                 })
@@ -123,7 +129,7 @@ class CNNLabeling(Labeling):
     @dataframe_empty_handler
     def load_labeling(self):
         super().load_labeling()
-        labeling = pd.read_csv(self.path / f'labeling_{self.period}_{self.interval}.csv', index_col=False)
+        labeling = pd.read_csv(self.path / f'labeling_{self.period}_{self.interval}.csv', index_col=False, dtype=str)
         self.labeling = labeling
         return labeling
 
@@ -145,44 +151,47 @@ class YoloLabeling(Labeling):
         stock = Stock(ticker, self.market)
         data = stock.load_data()
         dates = data.index.tolist()
-        trade_dates = [d for d in dates if (d >= start) & (d < end)]
+        last_dates = [d for d in dates if (d >= start) & (d < end)]
         
-        for trade_date in trade_dates:
-            i = dates.index(trade_date)
+        for last_date in last_dates:
+            i = dates.index(last_date)
             section = data.iloc[i - self.period + 1: i + 1, :]  # trading(input) data
             if len(section) == self.period:
                 if self.method == 'MinMax':
+                    self.labels = [0, 1]
                     labeling = minmax_labeling(section, self.period, 10)
                 
                 elif self.method == 'Pattern':
+                    self.labels = list(range(Bullish().num + Bearish().num))
                     labeling = pattern_labeling(section)
                 
                 elif self.method == 'Merge':
+                    self.labels = [0, 1]
                     # load MinMax Labeling
                     self.change_method('MinMax')
-                    minmax = self.load_labeling(ticker, trade_date)
+                    minmax = self.load_labeling(ticker, last_date)
                     
                     # load Pattern Labeling
                     self.change_method('Pattern')
-                    patterns = self.load_labeling(ticker, trade_date)
+                    patterns = self.load_labeling(ticker, last_date)
                     
                     # get candlestick chart config
                     config = get_config(self.name)
-                    labeling = merge_labeling(section, ticker, trade_date, minmax, patterns, config, 4, 2)
+                    labeling = merge_labeling(section, ticker, last_date, minmax, patterns, config, 4, 2)
                     self.change_method('Merge')
                     
                     if labeling is None:
                         continue
                     
-                labeling.to_csv(self.path / f'{ticker}_{trade_date}_{self.period}.csv', index=False)
+                labeling.to_csv(self.path / f'{ticker}_{last_date}_{self.period}.csv', index=False)
             else:
                 break
 
 
     @dataframe_empty_handler
-    def load_labeling(self, ticker, trade_date):
+    def load_labeling(self, ticker, last_date):
         super().load_labeling()
-        labeling = pd.read_csv(self.path / f'{ticker}_{trade_date}_{self.period}.csv', index_col=False)
+        labeling = pd.read_csv(self.path / f'{ticker}_{last_date}_{self.period}.csv', index_col=False, dtype=str)
         self.labeling = labeling
         return labeling
     
@@ -190,3 +199,14 @@ class YoloLabeling(Labeling):
         self.method = method
         self.path = self.path.parent / self.method
         self.path.mkdir(parents=True, exist_ok=True)
+
+
+def count_by_label(labeling: pd.DataFrame, offset=1):
+    '''
+    count the number of each label in labeling csv file
+    '''
+    index = labeling.index.tolist()
+    offset_index = list(range(index[0], index[-1] + 1, offset))
+    offset_labeling = labeling[labeling.index.isin(offset_index)]
+    count = offset_labeling['Label'].value_counts()
+    return count.tolist()
