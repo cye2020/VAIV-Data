@@ -23,6 +23,13 @@ if __name__ == '__main__':
         help='existing project/name ok, do not increment'
     )
     parser.add_argument(
+        '--market', '-m', nargs='+', type=str, dest='market', required=True,
+        help='You can input a market under options\n' + \
+             'KOSPI: Stock market includes KOSPI only\n' + \
+             'KOSDAQ: Stock market includes KOSDAQ only\n' + \
+             'KONEX: Stock market includes KONEX only'
+    )
+    parser.add_argument(
         '--train', nargs='+', type=int, default=[2006, 2018], help='train period'
     )
     parser.add_argument(
@@ -38,7 +45,7 @@ if __name__ == '__main__':
         '--labeling', '-l', type=str, required=True, help='Labeling folder (method)'
     )
     parser.add_argument(
-        '--chart', '-c', type=str, required=True, help='candlestick chart folder'
+        '--img', '-i', type=str, required=True, help='candlestick chart image folder'
     )
     parser.add_argument(
         '--offset', '-o', type=int, default=1, help='chart image shift by offset'
