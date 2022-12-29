@@ -133,6 +133,33 @@ python make_labeling.py --yolo -m kospi --method Merge
 ```
 <img src="./Sample/Merge_000020_2022-12-01.png" width="720px" height="260px" title="Merge Labeling Sample" alt="Merge Labeling"></img><br/>
 
+__Directory__
+```
+Data
+└── Labeling
+    ├── CNN
+    │   ├── Kosdaq
+    │   │   ├── 4%_01_2
+    │   │   │   ├── labeling_20_5.csv
+    │   │   │   └── ...
+    │   │   └── ...
+    │   └── Kospi
+    │       ├── 4%_01_2
+    │       │   ├── labeling_20_5.csv
+    │       │   └── ...
+    │       └── ...
+    └── Yolo
+        ├── Kosdaq
+        │   ├── MinMax
+        │   │   ├── 000250_2022-12-01_245.csv
+        │   │   └── ...
+        │   └── ...
+        └── Kospi
+            ├── MinMax
+            │   ├── 000020_2022-12-01_245.csv
+            │   └── ...
+            └── ...
+```
 
 
 ### 2.5 Make Dataset
