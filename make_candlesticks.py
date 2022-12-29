@@ -9,12 +9,12 @@ def make_ticker_candlesticks(chart: CandlstickChart, ticker, market, start='2006
     data = Stock(ticker, market).load_data()
     dates = data.index.tolist()
     dates = [d for d in dates if (d >= start) & (d < end)]
-    for trade_date in dates:
-        chart.make_chart(ticker, trade_date)
+    for last_date in dates:
+        chart.make_chart(ticker, last_date)
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         '--name', '-n', type=str, dest='name', default=None, help='the name of chart folder'
     )

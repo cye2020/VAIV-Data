@@ -9,7 +9,7 @@ def claculate_profit(left_close, right_close):
     return (right_close - left_close) / left_close * 100
 
 
-def minmax_drange(stock, trade_date, left_thres, right_thres, temp) -> list:
+def minmax_drange(stock, last_date, left_thres, right_thres, temp) -> list:
     '''
     left profit: the percentage of profit between leftmost candlestick and minmax candlestick
     right profit: the percentage of profit between minmax candlestick and rightmost candlestick
@@ -22,11 +22,11 @@ def minmax_drange(stock, trade_date, left_thres, right_thres, temp) -> list:
     return: list
         the minimum date range that absolute value of profit is more than threshold
     '''
-    close = stock.Close.loc[trade_date]
-    left_close = stock.Close.loc[:trade_date].iloc[:-1].iloc[::-1]
-    right_close = stock.Close.loc[trade_date:].iloc[1:]
-    left_most = trade_date
-    right_most = trade_date
+    close = stock.Close.loc[last_date]
+    left_close = stock.Close.loc[:last_date].iloc[:-1].iloc[::-1]
+    right_close = stock.Close.loc[last_date:].iloc[1:]
+    left_most = last_date
+    right_most = last_date
 
     for left, lclose in left_close.items():
         profit = temp*claculate_profit(lclose, close)
@@ -47,11 +47,11 @@ def minmax_drange(stock, trade_date, left_thres, right_thres, temp) -> list:
     return stock.loc[left_most:right_most].index.tolist()
 
 
-def merge_labeling(stock: pd.DataFrame, ticker, trade_date, minmax: pd.DataFrame, patterns: pd.DataFrame, config, left_thres, right_thres):
+def merge_labeling(stock: pd.DataFrame, ticker, last_date, minmax: pd.DataFrame, patterns: pd.DataFrame, config, left_thres, right_thres):
     labeling_list = []
     before_drange = {'Label': -1, 'Date': 'empty', 'Range': []}
     chart = YoloChart(market=Stock(ticker).market, exist_ok=True, **config)
-    pixel = chart.load_pixel_coordinates(ticker=ticker, trade_date=trade_date)
+    pixel = chart.load_pixel_coordinates(ticker=ticker, last_date=last_date)
     dates = stock.index.tolist()
 
     for row in minmax.to_dict('records'):
@@ -110,7 +110,7 @@ def merge_labeling(stock: pd.DataFrame, ticker, trade_date, minmax: pd.DataFrame
         labeling = pd.concat(labeling_list)
     except ValueError:  # minmax나 pattern이 없다
         print('MinMax or Pattern is empty!')
-        print(ticker, trade_date)
+        print(ticker, last_date)
         return None
 
     return labeling

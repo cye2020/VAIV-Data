@@ -13,7 +13,7 @@ def make_labeling(market, number, labeling: Labeling, start='2006', end='a'):
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
         '--market', '-m', nargs='+', type=str, dest='market', required=True,
         help='You can input a market under options\n' + \

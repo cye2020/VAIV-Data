@@ -8,7 +8,7 @@ from utils import candlestick_ochl, volume_overlay, dataframe_empty_handler, inc
 
 
 class CandlstickChart:
-    def __init__(self, market: str, size, period, linespace, candlewidth, linewidth, style, name, exist_ok, **kwargs) -> None:
+    def __init__(self, market: str=None, size=None, period=None, linespace=None, candlewidth=None, linewidth=None, style=None, name=None, exist_ok=None, **kwargs) -> None:
         '''
         size: [width, height]
             the size of chart image
@@ -23,6 +23,8 @@ class CandlstickChart:
         style: str
             plot style of matplotlib (ex. default: white background, dark_style: dark background)
         '''
+        if 'undefined' in kwargs:
+            return
         self.market = market.capitalize()
         self.size = size
         self.period = period
@@ -84,10 +86,10 @@ class CandlstickChart:
         
     
     @dataframe_empty_handler
-    def make_chart(self, ticker, trade_date, pixel=True):
+    def make_chart(self, ticker, last_date, pixel=True):
         '''
         ticker: str
-        trade_date: str
+        last_date: str
             the last candle (%Y-%m-%d)
         pixel: bool
             whether to save pixel coordinates. True when making yolo chart
@@ -95,14 +97,14 @@ class CandlstickChart:
         stock = FeatureStock(ticker, self.market, **self.feature)
         data = stock.load_data()
         dates = data.index.tolist()
-        trade_index = dates.index(trade_date)
+        trade_index = dates.index(last_date)
         start_index = trade_index - self.period + 1
         
         if start_index < 0:
             return
         
         start = dates[start_index]
-        c = data.loc[start:trade_date]
+        c = data.loc[start:last_date]
         
         plt.style.use(self.style)
         num, ax = subplots(self.feature.get('volume'), self.feature.get('MACD'))
@@ -166,7 +168,7 @@ class CandlstickChart:
             ax3.yaxis.set_visible(False)
             ax3.axis('off')
         
-        name = f'{ticker}_{trade_date}'
+        name = f'{ticker}_{last_date}'
         fig.savefig(self.path / 'images' / f'{name}.png')
         pil_image = Image.open(self.path / 'images' / f'{name}.png')
         rgb_image = pil_image.convert('RGB')
@@ -176,13 +178,13 @@ class CandlstickChart:
             pixel_coordinates = get_pixel(self.size, lines, patches, fig, c)
             pixel_coordinates.to_csv(self.path / 'pixels' / f'{name}.csv')
 
-    def load_pixel_coordinates(self, ticker, trade_date):
-        name = f'{ticker}_{trade_date}'
+    def load_pixel_coordinates(self, ticker, last_date):
+        name = f'{ticker}_{last_date}'
         pixel_coordinates = pd.read_csv(self.path / 'pixels' / f'{name}.csv', index_col='Date')
         return pixel_coordinates
 
-    def load_chart_path(self, ticker, trade_date):
-        name = f'{ticker}_{trade_date}'
+    def load_chart_path(self, ticker, last_date):
+        name = f'{ticker}_{last_date}'
         return self.path / 'images' / f'{name}.png'
 
 
