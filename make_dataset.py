@@ -18,7 +18,7 @@ if __name__ == '__main__':
     )
 
     parser.add_argument(
-        '--name', '-n', type=str, dest='name', default=None, help='the name of dataset folder'
+        '--name', '-n', type=str, dest='name', default='temp', help='the name of dataset folder'
     )
     parser.add_argument(
         '--exist-ok', action='store_true',
