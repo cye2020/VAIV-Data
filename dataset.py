@@ -52,10 +52,9 @@ class Dataset:
     def sampling(self):
         pass
     
-    def move_image(self, ticker, last_date, label, save_dir):
+    def move_image(self, ticker, last_date, save_dir):
         img_from = self.chart.load_chart_path(ticker, last_date)
-        img_to = save_dir / str(label) / img_from.name
-        (save_dir / str(label)).mkdir(parents=True, exist_ok=True)
+        img_to = save_dir / img_from.name
         try:
             shutil.copyfile(img_from, img_to)
         except FileNotFoundError:
@@ -145,7 +144,9 @@ class CNNDataset(Dataset):
             last_date = row['Date']
             label = row['Label']
             
-            super().move_image(ticker, last_date, label, save_dir)
+            save_dir = save_dir / str(label)
+            (save_dir).mkdir(parents=True, exist_ok=True)
+            super().move_image(ticker, last_date, save_dir)
 
 
 class YoloDataset(Dataset):
@@ -196,6 +197,7 @@ class YoloDataset(Dataset):
             (self.path / 'labels' / folder).mkdir(parents=True, exist_ok=True)
             (self.path / 'dataframes' / folder).mkdir(parents=True, exist_ok=True)
             self.files_labeling(files, folder)
+            self.move_image(files, folder)
         
     def sampling(self, files: list, n):
         super().sampling()
@@ -240,6 +242,11 @@ class YoloDataset(Dataset):
             dataframes.to_csv(self.path / 'dataframes' / folder / f'{name}.csv', index=False)
             
     
-    def move_image(self):
-        # super().move_image()
+    def move_image(self, files: List[Path], folder):
+        for file in files:
+            s = file.stem.split('_')
+            ticker = s[0]
+            last_date = s[1]
+            save_dir = self.path / 'images' / folder
+            super().move_image(ticker, last_date, save_dir)
         pass
