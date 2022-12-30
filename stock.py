@@ -99,6 +99,7 @@ class StockMarket:
             for i, ticker in enumerate(tqdm(self.tickers)):
         '''
         update_tickers(self.tickers, self.market)
+        print(f'Make {self.market} Stocks Complete!')
 
 
 def update_tickers(tickers, market='ALL'):
@@ -110,4 +111,5 @@ def update_tickers(tickers, market='ALL'):
         except requests.exceptions.ChunkedEncodingError:
             time.sleep(1)
             error_tickers.append(ticker)
-    update_tickers(error_tickers, market)
+    if error_tickers:
+        update_tickers(error_tickers, market)
