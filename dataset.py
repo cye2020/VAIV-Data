@@ -25,17 +25,17 @@ import shutil
 from typing import List
 from labeling import CNNLabeling, YoloLabeling
 from candlestick import CandlstickChart, CNNChart, YoloChart, get_config
-from utils import increment_path, between
+from utils import increment_path, between, dataframe_empty_handler
 import warnings
 warnings.filterwarnings("ignore") 
 
 
 class Dataset:
-    def __init__(self, name, img, method, market, train, valid, test, sample, offset) -> None:
+    def __init__(self, name, img, method, market: str, train, valid, test, sample, offset) -> None:
         self.name = name
         self.img = img
         self.method = method
-        self.market = market
+        self.market = market.capitalize()
         self.train = train
         self.valid = valid
         self.test = test
@@ -85,11 +85,12 @@ class CNNDataset(Dataset):
         config = get_config(name)
         self.chart = CNNChart(market=market, exist_ok=True, **config)
         self.labeling = CNNLabeling(market=market, period=self.chart.period, interval=interval, method=method)
-        
+    
+    @dataframe_empty_handler
     def make_dataset(self):
         super().make_dataset()
         l = self.labeling.load_labeling(offset=self.offset)  # labeling csv file
-        
+
         train = l[between(l['Date'], self.train)]
         valid = l[between(l['Date'], self.valid)]
         
