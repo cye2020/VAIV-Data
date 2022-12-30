@@ -16,13 +16,13 @@ python make_candlesticks.py -n ${yolo_name} -m ${market[@]} --yolo -num ${number
 
 
 cnn_method="4%_01_2"
-yolo_method=("MinMax", "Pattern", "Merge")
+yolo_method=("MinMax" "Pattern" "Merge")
 cnn_period=20
 yolo_period=245
 interval=5
 
 # make labeling
-python make_labeling.py -m ${market[@]} --cnn --method ${cnn_method} --interval ${interval} -num ${number} --period ${cnn_period} -s ${start} -e ${end}
+python make_labeling.py -m ${market[@]} --cnn --method ${cnn_method} -interval ${interval} -num ${number} --period ${cnn_period} -s ${start} -e ${end}
 
 for method in ${yolo_method[@]}
 do
@@ -41,7 +41,7 @@ pattern_thres=4
 
 
 # make dataset
-python make_dataset.py --n ${name} -m ${market[@]} --cnn -l ${cnn_method} -i ${cnn_name} --interval ${interval} -num ${number} --period ${cnn_period} -s ${start} -e ${end} --train ${train[@]} --valid ${valid[@]} --test ${test[@]} --sample ${sample[@]} -o 5
+python make_dataset.py --n ${name} -m ${market[@]} --cnn -l ${cnn_method} -i ${cnn_name} -interval ${interval} -num ${number} --period ${cnn_period} -s ${start} -e ${end} --train ${train[@]} --valid ${valid[@]} --test ${test[@]} --sample ${sample[@]} -o 5
 
 for method in ${yolo_method[@]}
 do
