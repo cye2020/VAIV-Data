@@ -112,8 +112,8 @@ if __name__ == '__main__':
         
         else:
             chart = YoloChart(**kwargs)
-    
-        with mp.Pool() as pool:
+        
+        with mp.Pool(10) as pool:
             args_list = [(chart, ticker, market, args.start, args.end) for ticker in tickers[:num]]
             result = pool.starmap_async(make_ticker_candlesticks, args_list)
             result.wait()
