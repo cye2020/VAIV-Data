@@ -8,8 +8,17 @@ Install packages with:
 pip install -r requirements.txt
 ```
 
-## 2. Module
-### 2.1 Download Stock OHLCV historical data
+## 2. Quick Start
+Preprocess all progress at one command
+
+Before start, **modify variables** in bash file
+
+```
+nohup bash preprocess.bash > preprocess.txt &
+```
+
+## 3. Module
+### 3.1 Download Stock OHLCV historical data
 download stock historical data using [FinanceDataReader](https://github.com/financedata-org/FinanceDataReader)
 
 ```
@@ -30,7 +39,7 @@ Data
         └── ...
 ```
 
-### 2.2 Make Candlestick Chart
+### 3.2 Make Candlestick Chart
 make candlestick chart from stock historical data
 
 <img src="./Image/224x224/Kospi/images/000020_2022-11-01.png" width="224px" height="224px" title="Candlestick Chart Sample" alt="CNN Chart"></img><br/>
@@ -86,7 +95,7 @@ Image file name: {ticker}_{last date of candlestick chart}.png
 
 pixels: there are csv files mapping *__trade date__* to *__pixel coordinates__*.
 
-### 2.3 Update
+### 3.3 Update
 update stock hitorical data and candlestick chart everyday
 
 First, set markets and candlestick chart folder names in _update.bash_
@@ -101,15 +110,15 @@ run update.bash via cron
 0 0 * * * /home/user/Data/update.bash
 ```
 
-### 2.4 Labeling
+### 3.4 Labeling
 
-#### 2.4.1 CNN Labeling
+#### 3.4.1 CNN Labeling
 ```
 # n%_01_2 Labeling, n = 4
 python make_labeling.py --cnn -m kospi kosdaq --method 4%_01_2
 ```
 
-#### 2.4.2 Yolo Labeling
+#### 3.4.2 Yolo Labeling
 
 ```
 # MinMax Labeling
@@ -162,7 +171,7 @@ Data
 ```
 
 
-### 2.5 Make Dataset
+### 3.5 Make Dataset
 
 ```
 # make dataset based on cnn default setting
@@ -175,6 +184,42 @@ python make_dataset.py --yolo -m kospi kosdaq -l Merge -i 1800x650
 ```
 
 
-## 3. Reference
+__Directory__
+```
+Data
+└── Dataset
+    ├── CNN
+    │   └── {name}
+    │       ├── train
+    │       │   ├── 0
+    │       │   └── 1
+    │       ├── valid
+    │       │   ├── 0
+    │       │   └── 1
+    │       ├── test{year}
+    │       │   ├── 0
+    │       │   └── 1
+    │       └── ...
+    └── Yolo
+        └── {name}
+            ├── images
+            │   ├── train
+            │   ├── valid
+            │   ├── test{year}
+            │   └── ...
+            ├── labels
+            │   ├── train
+            │   ├── valid
+            │   ├── test{year}
+            │   └── ...
+            └── dataframes
+                ├── train
+                ├── valid
+                ├── test{year}
+                └── ...
+```
+
+
+## 4. Reference
 
 > Martinssson, F., & Liljeqvist, I. (2017). Short-Term Stock Market Prediction Based on Candlestick Pattern Analysis.
