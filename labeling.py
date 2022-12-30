@@ -27,7 +27,7 @@
 '''
 import pandas as pd
 from pathlib import Path
-import random
+import numpy as np
 from stock import Stock
 from utils import dataframe_empty_handler, Bullish, Bearish
 from minmax_labeling import minmax_labeling
@@ -61,6 +61,19 @@ class Labeling:
     
     def load_labeling(self):
         pass
+    
+    def balance(self, labeling: pd.DataFrame, sample=float('inf')):
+        '''
+        balancing label
+        
+        sample: int
+            sample number of label
+        '''
+        count = labeling['Label'].value_counts().tolist()
+        num = min(*count, sample)
+        balanced_labeling = labeling.groupby('Label').sample(n=num)
+        return balanced_labeling.reset_index(drop=True)
+        
     
 
 class CNNLabeling(Labeling):
@@ -127,11 +140,14 @@ class CNNLabeling(Labeling):
         labeling.to_csv(self.path / f'labeling_{self.period}_{self.interval}.csv', index=False)
     
     @dataframe_empty_handler
-    def load_labeling(self):
+    def load_labeling(self, offset=1):
         super().load_labeling()
         labeling = pd.read_csv(self.path / f'labeling_{self.period}_{self.interval}.csv', index_col=False, dtype=str)
-        self.labeling = labeling
-        return labeling
+        index = labeling.index.tolist()
+        offset_index = list(range(index[0], index[-1] + 1, offset))
+        offset_labeling = labeling[labeling.index.isin(offset_index)]
+        self.labeling = offset_labeling
+        return self.labeling
 
 
 class YoloLabeling(Labeling):
@@ -193,7 +209,7 @@ class YoloLabeling(Labeling):
         super().load_labeling()
         labeling = pd.read_csv(self.path / f'{ticker}_{last_date}_{self.period}.csv', index_col=False, dtype=str)
         self.labeling = labeling
-        return labeling
+        return labeling.replace(np.nan, '')
     
     def change_method(self, method: str):
         self.method = method
