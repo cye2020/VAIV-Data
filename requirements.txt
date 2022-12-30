@@ -20,6 +20,7 @@ nvidia-cuda-runtime-cu11==11.7.99
 nvidia-cudnn-cu11==8.5.0.96
 packaging==22.0
 pandas==1.5.2
+parmap==1.6.0
 Pillow==9.3.0
 pykrx==1.0.39
 pyluach==2.0.2
