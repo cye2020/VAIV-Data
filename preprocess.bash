@@ -11,8 +11,8 @@ start=2019
 end=2022
 
 # make candlestick chart
-python make_candlesticks.py -n ${yolo_name} -m ${market[@]} --yolo -num ${number} -s ${start} -e ${end}
 python make_candlesticks.py -n ${cnn_name} -m ${market[@]} --cnn -num ${number} -s ${start} -e ${end}
+python make_candlesticks.py -n ${yolo_name} -m ${market[@]} --yolo -num ${number} -s ${start} -e ${end}
 
 
 cnn_method="4%_01_2"
@@ -26,16 +26,16 @@ python make_labeling.py -m ${market[@]} --cnn --method ${cnn_method} --interval 
 
 for method in ${yolo_method[@]}
 do
-    python make_labeling.py -m ${market[@]} --yolo -method ${method} -n ${yolo_name} -num ${number} --period ${yolo_period} -s ${start} -e ${end}
+    python make_labeling.py -m ${market[@]} --yolo --method ${method} -n ${yolo_name} -num ${number} --period ${yolo_period} -s ${start} -e ${end}
 done
 
 
 
 name="Default"
-train=(2019, 2020)
-valid=(2020, 2021)
-test=(2021, 2022)
-sample=(50, 50, 50)
+train=(2019 2020)
+valid=(2020 2021)
+test=(2021 2022)
+sample=(50 50 50)
 prior_thres=5
 pattern_thres=4
 
