@@ -11,8 +11,8 @@ start=2019
 end=2022
 
 # make candlestick chart
-python make_candlesticks -n ${yolo_name} -m ${market[@]} --yolo -num ${number} -s ${start} -e ${end}
-python make_candlesticks -n ${cnn_name} -m ${market[@]} --cnn -num ${number} -s ${start} -e ${end}
+python make_candlesticks.py -n ${yolo_name} -m ${market[@]} --yolo -num ${number} -s ${start} -e ${end}
+python make_candlesticks.py -n ${cnn_name} -m ${market[@]} --cnn -num ${number} -s ${start} -e ${end}
 
 
 cnn_method="4%_01_2"
