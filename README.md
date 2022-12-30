@@ -166,10 +166,12 @@ Data
 
 ```
 # make dataset based on cnn default setting
-python make_dataset.py --cnn
+# with labeling method '4%_01_2' and Image folder name '224x224'
+python make_dataset.py --cnn -m kospi kosdaq -l 4%_01_2 -i 224x224
 
 # make dataset based on cnn default setting
-python make_dataset.py --yolo
+# with labeling method 'Merge' and Image folder name '1800x650'
+python make_dataset.py --yolo -m kospi kosdaq -l Merge -i 1800x650
 ```
 
 
