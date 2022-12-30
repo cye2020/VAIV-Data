@@ -1,4 +1,5 @@
 from tqdm import tqdm
+import requests
 import time
 import pandas as pd
 from pathlib import Path
@@ -97,7 +98,16 @@ class StockMarket:
         If you want to see progress bar, modify code to
             for i, ticker in enumerate(tqdm(self.tickers)):
         '''
-        for ticker in self.tickers:
-            s = Stock(ticker, market=self.market)
+        update_tickers(self.tickers, self.market)
+
+
+def update_tickers(tickers, market='ALL'):
+    error_tickers = list()
+    for i, ticker in enumerate(tqdm(tickers)):
+        s = Stock(ticker, market=market)
+        try:
             s.update_data()
+        except requests.exceptions.ChunkedEncodingError:
             time.sleep(1)
+            error_tickers.append(ticker)
+    update_tickers(error_tickers, market)
