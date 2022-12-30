@@ -44,7 +44,7 @@ class Stock:
         '''
         Load historical data from the path
         '''
-        self.data = pd.read_csv(self.path / f'{self.ticker}.csv', index_col='Date')
+        self.data = pd.read_csv(self.path / f'{self.ticker}.csv', index_col='Date', engine='python', error_bad_lines=False)
         return self.data
     
     @dataframe_empty_handler
