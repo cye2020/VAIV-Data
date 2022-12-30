@@ -2,15 +2,18 @@ import argparse
 from stock import StockMarket, Stock
 from candlestick import CNNChart, YoloChart, CandlstickChart
 import multiprocessing as mp
+import parmap
+import numpy as np
 import warnings
 warnings.filterwarnings(action='ignore')
 
-def make_ticker_candlesticks(chart: CandlstickChart, ticker, market, start='2006', end='a'):
-    data = Stock(ticker, market).load_data()
-    dates = data.index.tolist()
-    dates = [d for d in dates if (d >= start) & (d < end)]
-    for last_date in dates:
-        chart.make_chart(ticker, last_date)
+def make_ticker_candlesticks(tickers, chart: CandlstickChart, market, start='2006', end='a'):
+    for ticker in tickers:
+        data = Stock(ticker, market).load_data()
+        dates = data.index.tolist()
+        dates = [d for d in dates if (d >= start) & (d < end)]
+        for last_date in dates:
+            chart.make_chart(ticker, last_date)
 
 
 if __name__ == '__main__':
@@ -113,7 +116,13 @@ if __name__ == '__main__':
         else:
             chart = YoloChart(**kwargs)
         
-        with mp.Pool(10) as pool:
-            args_list = [(chart, ticker, market, args.start, args.end) for ticker in tickers[:num]]
-            result = pool.starmap_async(make_ticker_candlesticks, args_list)
-            result.wait()
+        num_cores = min(10, mp.cpu_count(), num)
+        splited_tickers = np.array_split(tickers[:num], num_cores)
+        splited_tickers = [x.tolist() for x in splited_tickers]
+        
+        parmap.map(
+            make_ticker_candlesticks, splited_tickers,
+            chart, market, args.start, args.end,
+            pm_pbar=True,
+            pm_processes=num_cores
+        )
