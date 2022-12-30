@@ -9,7 +9,7 @@ def claculate_profit(left_close, right_close):
     return (right_close - left_close) / left_close * 100
 
 
-def minmax_drange(stock, last_date, left_thres, right_thres, temp) -> list:
+def minmax_drange(stock: pd.DataFrame, last_date, left_thres, right_thres, temp) -> list:
     '''
     left profit: the percentage of profit between leftmost candlestick and minmax candlestick
     right profit: the percentage of profit between minmax candlestick and rightmost candlestick
@@ -55,9 +55,9 @@ def merge_labeling(stock: pd.DataFrame, ticker, last_date, minmax: pd.DataFrame,
     dates = stock.index.tolist()
 
     for row in minmax.to_dict('records'):
-        label = row.get('Label')
+        label = int(row.get('Label'))
         minmax_date = row.get('Date')
-        prior = row.get('Priority')
+        prior = int(row.get('Priority'))
         
         temp = -1 if label==1 else 1
         
@@ -80,8 +80,6 @@ def merge_labeling(stock: pd.DataFrame, ticker, last_date, minmax: pd.DataFrame,
 
         # remove local minimum
         if before_drange.get('Label') == label:
-            # intersection = list(set(drange).intersection(before_drange.get('Range')))
-            # if len(intersection) > 0:
             close = temp*  stock.Close.loc[minmax_date]
             before_close = temp * stock.Close.loc[before_drange.get('Date')]
             if close < before_close:
@@ -103,9 +101,7 @@ def merge_labeling(stock: pd.DataFrame, ticker, last_date, minmax: pd.DataFrame,
             'Priority': [prior],
         })
         labeling_list.append(df)
-        # print(drange)
         before_drange = {'Label': label, 'Date': minmax_date, 'Range': drange}
-    
     try:
         labeling = pd.concat(labeling_list)
     except ValueError:  # minmax나 pattern이 없다
@@ -117,6 +113,9 @@ def merge_labeling(stock: pd.DataFrame, ticker, last_date, minmax: pd.DataFrame,
 
 
 def get_xyxy(pixel, drange):
+    '''
+    Convert Date Range to bbox
+    '''
     xmins = []
     ymins = []
     xmaxs = []
