@@ -1,10 +1,9 @@
 import argparse
-from dataset import CNNDataset, YoloDataset
+from dataset import Dataset, CNNDataset, YoloDataset
 
 
-def make_dataset(**kwargs):
+def make_dataset(dataset: Dataset, **kwargs):
     kwargs['market'] = kwargs['market'][0]
-    dataset = CNNDataset(**kwargs)
     dataset.make_dataset()
 
 
@@ -75,5 +74,12 @@ if __name__ == '__main__':
     
     args = parser.parse_args()
     kwargs = args.__dict__
-    print(args)
-    make_dataset(**kwargs)
+    
+    for market in args.market:
+        kwargs['market'] = market
+        if args.cnn:
+            dataset = CNNDataset(**kwargs)
+        
+        else:
+            dataset = YoloDataset(**kwargs)
+        make_dataset(dataset, **kwargs)
