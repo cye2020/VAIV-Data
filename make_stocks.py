@@ -1,6 +1,7 @@
 from stock import StockMarket
 import argparse
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument(
