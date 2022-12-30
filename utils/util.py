@@ -24,3 +24,11 @@ def increment_path(path, exist_ok=True, sep=''):
         i = [int(m.groups()[0]) for m in matches if m]  # indices
         n = max(i) + 1 if i else 2  # increment number
         return f"{path}{sep}{n}"  # update path
+
+
+def between(date: str, lr: list) -> bool:
+    '''
+    lr: list
+        [start, end] start <= date < end
+    '''
+    return (str(lr[0]) <= date) & (date < str(lr[1]))
