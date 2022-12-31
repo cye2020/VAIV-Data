@@ -41,11 +41,11 @@ pattern_thres=4
 
 
 # make dataset
-python make_dataset.py --n ${name} -m ${market[@]} --cnn -l ${cnn_method} -i ${cnn_name} -interval ${interval} -num ${number} --period ${cnn_period} -s ${start} -e ${end} --train ${train[@]} --valid ${valid[@]} --test ${test[@]} --sample ${sample[@]} -o 5
+python make_dataset.py --n ${name} -m ${market[@]} --cnn -l ${cnn_method} -i ${cnn_name} -interval ${interval} --period ${cnn_period} --train ${train[@]} --valid ${valid[@]} --test ${test[@]} --sample ${sample[@]} -o 5
 
 for method in ${yolo_method[@]}
 do
-    python make_dataset.py --n ${name} -m ${market[@]} --yolo -l ${yolo_method} -i ${yolo_name} -num ${number} --period ${cnn_period} -s ${start} -e ${end} --train ${train[@]} --valid ${valid[@]} --test ${test[@]} --sample ${sample[@]} -prior ${prior_thres} -pattern ${pattern_thres}
+    python make_dataset.py --n ${name} -m ${market[@]} --yolo -l ${yolo_method} -i ${yolo_name} --period ${cnn_period} --train ${train[@]} --valid ${valid[@]} --test ${test[@]} --sample ${sample[@]} -prior ${prior_thres} -pattern ${pattern_thres}
 done
 
 

@@ -46,6 +46,13 @@ class Dataset:
         self.root.mkdir(parents=True, exist_ok=True)
         self.chart = CandlstickChart(undefined=None)
 
+        try:
+            info = pd.read_csv(Path.cwd() / 'Dataset' / 'info.csv')
+        except FileNotFoundError:
+            info = pd.DataFrame()
+        
+        self.info = info
+        
     def make_dataset(self):
         pass
     
@@ -80,7 +87,19 @@ class CNNDataset(Dataset):
         super().__init__(name, img, method, market, train, valid, test, sample, offset)
 
         self.path = Path(increment_path(self.root / 'CNN' / self.name, exist_ok = exist_ok))
-
+        self.name = self.path.name
+        
+        new_info = pd.DataFrame({
+            'Name': [self.name],
+            'Model': ['CNN'],
+            'Market': [market],
+            'Image': [img],
+            'Labeling': [method],
+        })
+        info = pd.concat([self.info, new_info])
+        newinfo = info.drop_duplicates(subset=['Name', 'Market', 'Model'], keep='last').set_index('Name')
+        newinfo.to_csv(Path.cwd() / 'Dataset' / 'info.csv')
+        
         config = get_config(name)
         self.chart = CNNChart(market=market, exist_ok=True, **config)
         self.labeling = CNNLabeling(market=market, period=self.chart.period, interval=interval, method=method)
@@ -168,6 +187,18 @@ class YoloDataset(Dataset):
     ) -> None:
         super().__init__(name, img, method, market, train, valid, test, sample, offset)
         self.path = Path(increment_path(self.root / 'Yolo' / self.name, exist_ok = exist_ok))
+        self.name = self.path.name
+        
+        new_info = pd.DataFrame({
+            'Name': [self.name],
+            'Model': ['Yolo'],
+            'Market': [market],
+            'Image': [img],
+            'Labeling': [method],
+        })
+        info = pd.concat([self.info, new_info])
+        newinfo = info.drop_duplicates(subset=['Name', 'Market', 'Model'], keep='last').set_index('Name')
+        newinfo.to_csv(Path.cwd() / 'Dataset' / 'info.csv')
         
         self.prior_thres = prior_thres
         self.pattern_thres = pattern_thres

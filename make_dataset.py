@@ -83,3 +83,4 @@ if __name__ == '__main__':
         else:
             dataset = YoloDataset(**kwargs)
         make_dataset(dataset, **kwargs)
+        kwargs['exist_ok'] = True
