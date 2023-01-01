@@ -31,7 +31,7 @@ warnings.filterwarnings("ignore")
 
 
 class Dataset:
-    def __init__(self, name, img, method, market: str, train, valid, test, sample, offset) -> None:
+    def __init__(self, name, img, method, market: str, train, valid, test, sample, offset, root=Path.cwd()) -> None:
         self.name = name
         self.img = img
         self.method = method
@@ -42,12 +42,12 @@ class Dataset:
         self.sample =sample
         self.offset = offset
         
-        self.root = Path.cwd() / 'Dataset'
+        self.root = root / 'Dataset'
         self.root.mkdir(parents=True, exist_ok=True)
         self.chart = CandlstickChart(undefined=None)
 
         try:
-            info = pd.read_csv(Path.cwd() / 'Dataset' / 'info.csv')
+            info = pd.read_csv(root / 'Dataset' / 'info.csv')
         except FileNotFoundError:
             info = pd.DataFrame()
         
@@ -82,9 +82,10 @@ class CNNDataset(Dataset):
         interval: int = 5,
         offset: int = 1,
         exist_ok: bool = False,
+        root: Path = Path.cwd(),
         **kwargs
     ) -> None:
-        super().__init__(name, img, method, market, train, valid, test, sample, offset)
+        super().__init__(name, img, method, market, train, valid, test, sample, offset, root=root)
 
         self.path = Path(increment_path(self.root / 'CNN' / self.name, exist_ok = exist_ok))
         self.name = self.path.name
@@ -98,7 +99,7 @@ class CNNDataset(Dataset):
         })
         info = pd.concat([self.info, new_info])
         newinfo = info.drop_duplicates(subset=['Name', 'Market', 'Model'], keep='last').set_index('Name')
-        newinfo.to_csv(Path.cwd() / 'Dataset' / 'info.csv')
+        newinfo.to_csv(root / 'Dataset' / 'info.csv')
         
         config = get_config(name)
         self.chart = CNNChart(market=market, exist_ok=True, **config)
@@ -183,6 +184,7 @@ class YoloDataset(Dataset):
         pattern_thres: int = 3,
         offset: int = 1,
         exist_ok: bool = False,
+        root: Path = Path.cwd(),
         **kwargs
     ) -> None:
         super().__init__(name, img, method, market, train, valid, test, sample, offset)
@@ -198,7 +200,7 @@ class YoloDataset(Dataset):
         })
         info = pd.concat([self.info, new_info])
         newinfo = info.drop_duplicates(subset=['Name', 'Market', 'Model'], keep='last').set_index('Name')
-        newinfo.to_csv(Path.cwd() / 'Dataset' / 'info.csv')
+        newinfo.to_csv(root / 'Dataset' / 'info.csv')
         
         self.prior_thres = prior_thres
         self.pattern_thres = pattern_thres
@@ -225,6 +227,7 @@ class YoloDataset(Dataset):
     
         for folder, files in folders.items():
             (self.path / 'images' / folder).mkdir(parents=True, exist_ok=True)
+            (self.path / 'pixels' / folder).mkdir(parents=True, exist_ok=True)
             (self.path / 'labels' / folder).mkdir(parents=True, exist_ok=True)
             (self.path / 'dataframes' / folder).mkdir(parents=True, exist_ok=True)
             self.files_labeling(files, folder)
@@ -280,4 +283,11 @@ class YoloDataset(Dataset):
             last_date = s[1]
             save_dir = self.path / 'images' / folder
             super().move_image(ticker, last_date, save_dir)
-        pass
+            
+            pixel = self.chart.load_pixel_coordinates(ticker, last_date)
+            pixel.to_csv(self.path / 'pixels' / folder / f'{ticker}_{last_date}.csv')
+
+
+def get_dataset(name, root=Path.cwd()):
+    info = pd.read_csv(root / 'Dataset' / 'info.csv', index_col=False)
+    raw = info[info['Name'] == name]
