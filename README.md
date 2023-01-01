@@ -9,7 +9,7 @@ pip install -r requirements.txt
 ```
 
 ## 2. Quick Start
-Preprocess all progress at one command
+Preprocess all progress one command
 
 Before start, **modify variables** in bash file
 
