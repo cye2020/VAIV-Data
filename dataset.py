@@ -190,7 +190,7 @@ class YoloDataset(Dataset):
         root: Path = Path.cwd(),
         **kwargs
     ) -> None:
-        super().__init__(name, img, method, market, train, valid, test, sample, offset)
+        super().__init__(name, img, method, market, train, valid, test, sample, offset, root)
         self.path = Path(increment_path(self.root / 'Yolo' / self.name, exist_ok = exist_ok))
         self.name = self.path.name
         
