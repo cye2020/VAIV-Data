@@ -3,8 +3,11 @@ import pandas as pd
 import numpy as np
 from PIL import Image
 from pathlib import Path
-from stock import FeatureStock
-from utils import candlestick_ochl, volume_overlay, dataframe_empty_handler, increment_path
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.stock import FeatureStock
+from Data.utils import candlestick_ochl, volume_overlay, dataframe_empty_handler, increment_path
 
 
 class CandlstickChart:

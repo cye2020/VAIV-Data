@@ -6,7 +6,10 @@ from pathlib import Path
 import FinanceDataReader as fdr
 from pykrx.website import krx
 from pykrx import stock
-from utils import convert_format, convert_feature_format, dataframe_empty_handler
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.utils import convert_format, convert_feature_format, dataframe_empty_handler
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning)
 

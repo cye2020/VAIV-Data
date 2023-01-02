@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
 import torch
-from candlestick import YoloChart
-from stock import Stock
+from Data.candlestick import YoloChart
+from Data.stock import Stock
 
 
 def claculate_profit(left_close, right_close):

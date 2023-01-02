@@ -1,5 +1,9 @@
 import argparse
-from dataset import Dataset, CNNDataset, YoloDataset
+from pathlib import Path
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.dataset import Dataset, CNNDataset, YoloDataset
 
 
 def make_dataset(dataset: Dataset, **kwargs):

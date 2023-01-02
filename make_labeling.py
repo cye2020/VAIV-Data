@@ -1,6 +1,10 @@
 import argparse
-from labeling import CNNLabeling, YoloLabeling, Labeling
-from stock import StockMarket
+from pathlib import Path
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.labeling import CNNLabeling, YoloLabeling, Labeling
+from Data.stock import StockMarket
 import warnings
 warnings.filterwarnings("ignore", category=RuntimeWarning) 
 

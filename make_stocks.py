@@ -1,6 +1,9 @@
-from stock import StockMarket
+from pathlib import Path
 import argparse
-
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.stock import StockMarket
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)

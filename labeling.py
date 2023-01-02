@@ -28,12 +28,15 @@
 import pandas as pd
 from pathlib import Path
 import numpy as np
-from stock import Stock
-from utils import dataframe_empty_handler, Bullish, Bearish
-from minmax_labeling import minmax_labeling
-from pattern_labeling import pattern_labeling
-from merge_labeling import merge_labeling
-from candlestick import get_config
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.stock import Stock
+from Data.utils import dataframe_empty_handler, Bullish, Bearish
+from Data.minmax_labeling import minmax_labeling
+from Data.pattern_labeling import pattern_labeling
+from Data.merge_labeling import merge_labeling
+from Data.candlestick import get_config
 
 
 class Labeling:

@@ -1,9 +1,13 @@
 import argparse
-from stock import StockMarket, Stock
-from candlestick import CNNChart, YoloChart, CandlstickChart
+from pathlib import Path
 import multiprocessing as mp
 import parmap
 import numpy as np
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.stock import StockMarket, Stock
+from Data.candlestick import CNNChart, YoloChart, CandlstickChart
 import warnings
 warnings.filterwarnings(action='ignore')
 

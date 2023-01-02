@@ -1,5 +1,9 @@
 import pandas as pd
-from utils import Bullish, Bearish
+from pathlib import Path
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.utils import Bullish, Bearish
 
 def pattern_labeling(data: pd.DataFrame):
     bullish = Bullish()

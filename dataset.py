@@ -23,11 +23,14 @@ import pandas as pd
 import random
 import shutil
 from typing import List
-from labeling import CNNLabeling, YoloLabeling
-from candlestick import CandlstickChart, CNNChart, YoloChart, get_config
-from utils import increment_path, between, dataframe_empty_handler
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.labeling import CNNLabeling, YoloLabeling
+from Data.candlestick import CandlstickChart, CNNChart, YoloChart, get_config
+from Data.utils import increment_path, between, dataframe_empty_handler
 import warnings
-warnings.filterwarnings("ignore") 
+warnings.filterwarnings("ignore")
 
 
 class Dataset:

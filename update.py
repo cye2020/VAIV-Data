@@ -1,6 +1,10 @@
 import argparse
-from stock import StockMarket
-from candlestick import CandlstickChart, get_config
+from pathlib import Path
+import sys
+p = Path.absolute(Path.cwd().parent)
+sys.path.append(str(p))
+from Data.stock import StockMarket
+from Data.candlestick import CandlstickChart, get_config
 import exchange_calendars as ecals
 from datetime import datetime
 import warnings
