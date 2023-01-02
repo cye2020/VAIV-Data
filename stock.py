@@ -16,13 +16,18 @@ warnings.filterwarnings('ignore', category=FutureWarning)
 
 krx_market = {'STK': 'KOSPI', 'KSQ': 'KOSDAQ', 'KNX': 'KONEX'}
 class Stock:
-    def __init__(self, ticker, market='ALL') -> None:
+    def __init__(self, ticker, market='ALL', root=Path.cwd()) -> None:
         '''
-        p: path for historical data
+        ticker: str
+            ticker of stock
+        market: str
+            ALL / KOSPI / KOSDAQ
+        root: pathlib.Path
+            save directory
         '''
         self.ticker = ticker
-        self.market = krx_market.get(krx.get_stock_ticekr_market(ticker)) if market=='ALL' else market
-        self.path = Path.cwd() / 'Stock' / self.market.capitalize()
+        self.market = krx_market.get(krx.get_stock_ticekr_market(ticker)) if market=='ALL' else market.upper()
+        self.path = root / 'Stock' / self.market.capitalize()
         self.path.mkdir(parents=True, exist_ok=True)
         
     def download_data(self, start=None, end=None) -> pd.DataFrame:
@@ -63,14 +68,14 @@ class Stock:
 
 
 class FeatureStock(Stock):
-    def __init__(self, ticker, market='ALL', volume=False, SMA=[], EMA=[], MACD=[0, 0, 0]) -> None:
+    def __init__(self, ticker, market='ALL', volume=False, SMA=[], EMA=[], MACD=[0, 0, 0], root=Path.cwd()) -> None:
         '''
         volume: if include volume feature, True. Else, False.
         SMA: simple moving average period list
         EMA: exponential moving average period list
         MACD: [short period, longer period, oscillator period]
         '''
-        super().__init__(ticker, market)
+        super().__init__(ticker, market, root)
         self.volume = volume
         self.SMA = SMA
         self.EMA = EMA
@@ -94,23 +99,24 @@ class FeatureStock(Stock):
 
 
 class StockMarket:
-    def __init__(self, market='ALL') -> None:
+    def __init__(self, market='ALL', root=Path.cwd()) -> None:
         self.market =  market.upper()
         self.tickers = sorted(stock.get_market_ticker_list(market=self.market))
+        self.root = root
         
     def update_datas(self):
         '''
         If you want to see progress bar, modify code to
             for i, ticker in enumerate(tqdm(self.tickers)):
         '''
-        update_tickers(self.tickers, self.market)
+        update_tickers(self.tickers, self.market, self.root)
         print(f'Make {self.market} Stocks Complete!')
 
 
-def update_tickers(tickers, market='ALL'):
+def update_tickers(tickers, market='ALL', root=Path.cwd()):
     error_tickers = list()
     for i, ticker in enumerate(tqdm(tickers)):
-        s = Stock(ticker, market=market)
+        s = Stock(ticker, market=market, root=root)
         try:
             s.update_data()
         except requests.exceptions.ChunkedEncodingError:

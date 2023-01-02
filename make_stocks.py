@@ -17,4 +17,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for market in args.market:
-        StockMarket(market.upper()).update_datas()
+        StockMarket(market).update_datas()
