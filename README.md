@@ -47,34 +47,34 @@ make candlestick chart from stock historical data
 __Select market, base style, and the number of tickers__
 ```
 # make candlestick chart of both kospi and kosdaq markets in Yolo folder based on yolo default setting
-python make_candlesticks -n Yolo -m kospi kosdaq --yolo
+python make_candlesticks.py -n Yolo -m kospi kosdaq --yolo
 
 # make candlestick chart of only kospi market in CNN folder based on cnn default setting
-python make_candlesticks -n CNN -m kospi --cnn
+python make_candlesticks.py -n CNN -m kospi --cnn
 
 # make only 50 tickers
-python make_candlesticks -n Yolo -m kospi kosdaq --yolo -num 50
+python make_candlesticks.py -n Yolo -m kospi kosdaq --yolo -num 50
 ```
 
 __Add Feature__
 ```
 # with volume
-python make_candlesticks -n CNN -m kospi kosdaq --cnn -v
+python make_candlesticks.py -n CNN -m kospi kosdaq --cnn -v
 
 # with Simple Moving Average (period 10 and 20)
-python make_candlesticks -n CNN -m kospi kosdaq --cnn -sma 10 20
+python make_candlesticks.py -n CNN -m kospi kosdaq --cnn -sma 10 20
 
 # with Exponential Moving Average (period 60 and 120)
-python make_candlesticks -n CNN -m kospi kosdaq --cnn -ema 60 120
+python make_candlesticks.py -n CNN -m kospi kosdaq --cnn -ema 60 120
 
 # with Moving Average Convergence & Divergence (short period 12, long period 26, signal period 9)
-python make_candlesticks -n CNN -m kospi kosdaq --cnn -macd 12 26 9
+python make_candlesticks.py -n CNN -m kospi kosdaq --cnn -macd 12 26 9
 ```
 
 __Adjust chart setting__
 ```
 # trading period 250, image size 1600 × 500
-python make_candlesticks -n Yolo -m kospi kosdaq --yolo --period 250 --size 1600 500
+python make_candlesticks.py -n Yolo -m kospi kosdaq --yolo --period 250 --size 1600 500
 ```
 
 __Directory__
