@@ -1,6 +1,8 @@
 import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
 import pandas as pd
 import numpy as np
+import random
 from PIL import Image
 from pathlib import Path
 import sys
@@ -56,8 +58,8 @@ class CandlstickChart:
             'linewidth': [linewidth],
             'style': [style],
             'Volume': [self.feature.get('volume')],
-            'SMA': ['_'.join(self.feature.get('SMA'))],
-            'EMA': ['_'.join(self.feature.get('EMA'))],
+            'SMA': ['_'.join(map(str, self.feature.get('SMA')))],
+            'EMA': ['_'.join(map(str, self.feature.get('EMA')))],
             'MACD': ['_'.join(map(str, self.feature.get('MACD')))],
             'UpColor': [self.color.get('up')],
             'DownColor': [self.color.get('down')],
@@ -71,8 +73,8 @@ class CandlstickChart:
         
     def set_default(
         self,
-        volume=False, SMA=[], EMA=[], MACD=[0, 0, 0],
-        UpColor='#77d879', DownColor='#db3f3f', SMAColor=[], EMAColor=[], MACDColor=[],
+        volume=False, SMA=list(), EMA=list(), MACD=[0, 0, 0],
+        UpColor='77d879', DownColor='db3f3f', SMAColor=list(), EMAColor=list(), MACDColor=['FF0000', 'FFFFFF'],
         **kwargs
     ):
         '''
@@ -84,6 +86,23 @@ class CandlstickChart:
             {'up': bullish candlesticks, 'down': bearish candlesticks, 'SMA': [each SMA], 'EMA': [each 
             EMA], 'MACD': [MACD, MACD oscillator]}
         '''
+        UpColor = f'#{UpColor}' if UpColor[0] != '#' else UpColor
+        DownColor = f'#{DownColor}' if DownColor[0] != '#' else DownColor
+        for i in range(len(SMA)):
+            try:
+                SMAColor[i] = f'#{SMAColor[i]}' if SMAColor[i][0] != '#' else SMAColor[i]
+            except IndexError:
+                SMAColor.append(random.choice(list(mcolors.CSS4_COLORS.values())))
+        
+        for i in range(len(EMA)):
+            try:
+                EMAColor[i] = f'#{EMAColor[i]}' if EMAColor[i][0] != '#' else EMAColor[i]
+            except IndexError:
+                EMAColor.append(random.choice(list(mcolors.CSS4_COLORS.values())))
+        
+        for i in range(len(MACDColor)):
+            MACDColor[i] = f'#{MACDColor[i]}' if MACDColor[i][0] != '#' else MACDColor[i]
+        
         self.feature = {'volume': volume, 'SMA': SMA, 'EMA': EMA, 'MACD': MACD}
         self.color = {'up': UpColor, 'down': DownColor, 'SMA': SMAColor, 'EMA': EMAColor, 'MACD': MACDColor}
         
@@ -135,14 +154,16 @@ class CandlstickChart:
         )
         
         for i, span in enumerate(self.feature.get('SMA')):
+            copy = pd.concat([pd.Series([None]), c[f'{span}SMA']]).reset_index(drop=True)
             ax1.plot(
-                c[f'{span}SMA'], linewidth=self.linewidth,
+                copy, linewidth=self.linewidth,
                 color=self.color.get('SMA')[i], alpha=None
             )
             
         for i, span in enumerate(self.feature.get('EMA')):
+            copy = pd.concat([pd.Series([None]), c[f'{span}EMA']]).reset_index(drop=True)
             ax1.plot(
-                c[f'{span}EMA'], linewidth=self.linewidth,
+                copy, linewidth=self.linewidth,
                 color=self.color.get('EMA')[i], alpha=None
             )
             
@@ -162,8 +183,8 @@ class CandlstickChart:
         
         if not 0 in self.feature.get('MACD'):
             ax3 = fig.add_subplot(ax[num])
-            ax3.plot(c['MACD'], linewidth=1, color='red', alpha=None)
-            ax3.plot(c['MACD_Signal'], linewidth=1, color='white', alpha=None)
+            ax3.plot(c['MACD'], linewidth=1, color=self.color.get('MACD')[0], alpha=None)
+            ax3.plot(c['MACD_Signal'], linewidth=1, color=self.color.get('MACD')[1], alpha=None)
             ax3.grid(False)
             ax3.set_xticklabels([])
             ax3.set_yticklabels([])

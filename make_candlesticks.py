@@ -78,7 +78,7 @@ if __name__ == '__main__':
     
     feature = parser.add_argument_group('Feature')
     feature.add_argument(
-        '--volume', '-v', type=bool, default=argparse.SUPPRESS, help='chart with volume'
+        '--volume', '-v', action='store_true', default=argparse.SUPPRESS, help='chart with volume'
     )
     feature.add_argument(
         '--SMA', '-sma', nargs='+', type=int, default=argparse.SUPPRESS, help='the list of Simple Moving Average period list'
@@ -116,7 +116,6 @@ if __name__ == '__main__':
         kwargs['market'] = market
         if args.cnn:
             chart = CNNChart(**kwargs)
-        
         else:
             chart = YoloChart(**kwargs)
         
@@ -130,3 +129,4 @@ if __name__ == '__main__':
             pm_pbar=True,
             pm_processes=num_cores
         )
+        kwargs['exist_ok'] = True
