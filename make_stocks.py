@@ -14,7 +14,10 @@ if __name__ == '__main__':
              'KOSDAQ: Stock market includes KOSDAQ only\n' + \
              'KONEX: Stock market includes KONEX only'
     )
+    parser.add_argument(
+        '--root', '-r', type=str, default=str(Path.cwd()), help='Root Directory of Stock' 
+    )
     args = parser.parse_args()
 
     for market in args.market:
-        StockMarket(market).update_datas()
+        StockMarket(market, root=args.root).update_datas()

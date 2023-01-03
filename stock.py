@@ -83,12 +83,12 @@ class FeatureStock(Stock):
         
     def download_data(self, start=None, end=None) -> pd.DataFrame:
         data = super().download_data(start, end)
-        self.data = convert_feature_format(data, self.volume, self.SMA, self.EMA, self.MACD)
+        self.data = convert_feature_format(data, '%Y-%m-%d %H:%M:%S', self.volume, self.SMA, self.EMA, self.MACD)
         return self.data
     
     def load_data(self) -> pd.DataFrame:
         data = super().load_data()
-        self.data = convert_feature_format(data, self.volume, self.SMA, self.EMA, self.MACD)
+        self.data = convert_feature_format(data, '%Y-%m-%d', self.volume, self.SMA, self.EMA, self.MACD)
         return self.data
     
     def save_data(self) -> pd.DataFrame:

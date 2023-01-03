@@ -28,9 +28,20 @@ def convert_format(stock: pd.DataFrame, date_format: str):
 
 
 @dataframe_empty_handler
-def convert_feature_format(stock: pd.DataFrame, volume: bool, SMA: List[str], EMA: List[str], MACD=List[int]):
+def convert_feature_format(stock: pd.DataFrame, date_format: str, volume: bool, SMA: List[str], EMA: List[str], MACD=List[int]):
+    
+    column = ['Date', 'Open', 'Close', 'High', 'Low', 'Volume']
+    # Delete useless column
+    delete_col = set(stock.columns) - set(column)
+    
     if not volume:
-        del stock['Volume']
+        delete_col.append('Volume')
+    
+    # convert Date format to %Y-%m-%d
+    stock.Date = stock.Date.map(lambda x: convert_date_format(x, date_format))
+    
+    for i in delete_col:
+        del stock[i]
         
     for span in SMA:
         stock[f'{span}SMA'] = stock['Close'].rolling(span).mean()
